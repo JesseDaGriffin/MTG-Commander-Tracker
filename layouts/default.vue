@@ -12,6 +12,9 @@
           <NuxtLink to="/players" class="nav-link">Players</NuxtLink>
           <NuxtLink to="/decks" class="nav-link">Decks</NuxtLink>
           <NuxtLink to="/games" class="nav-link">Games</NuxtLink>
+          <button class="btn btn-secondary btn-sm ml-4" @click="signOut">
+            <Icon name="mdi:logout" class="mr-1" /> Sign Out
+          </button>
         </nav>
       </div>
     </header>
@@ -41,9 +44,23 @@
         <Icon name="mdi:sword-cross" class="nav-icon" />
         <span>Games</span>
       </NuxtLink>
+      <button class="bottom-nav-item" @click="signOut">
+        <Icon name="mdi:logout" class="nav-icon" />
+        <span>Sign Out</span>
+      </button>
     </nav>
   </div>
 </template>
+
+<script setup>
+const supabase = useSupabaseClient()
+const router = useRouter()
+
+const signOut = async () => {
+  await supabase.auth.signOut()
+  router.push('/login')
+}
+</script>
 
 <style scoped>
 .layout-container {

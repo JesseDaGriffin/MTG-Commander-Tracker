@@ -27,6 +27,10 @@ export default defineNuxtConfig({
   modules: ['@nuxtjs/supabase'],
   
   supabase: {
-    redirect: false // Start without auth enforcement
+    redirectOptions: {
+      login: '/login',
+      callback: '/confirm',
+      exclude: []
+    }
   }
 })
