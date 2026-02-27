@@ -54,19 +54,41 @@ let debounceTimeout = null
 
 const fetchCommanders = async (query) => {
   try {
-    // Only fetch Legendary Creatures
-    const response = await fetch(`https://api.magicthegathering.io/v1/cards?name=${encodeURIComponent(query)}&supertypes=Legendary&types=Creature&pageSize=10`)
+    // Only search for legendary creatures using Scryfall search syntax
+    const scryfallQuery = encodeURIComponent(`t:legend t:creature ${query}`)
+    const response = await fetch(`https://api.scryfall.com/cards/search?q=${scryfallQuery}`)
     const data = await response.json()
     
-    // Filter out duplicates (API sometimes returns multiple printings)
-    // and keep only cards suitable for commanders
+    if (data.object === 'error') {
+      results.value = []
+      return
+    }
+    
     const uniqueCards = []
     const seenNames = new Set()
     
-    for (const card of data.cards) {
+    // Scryfall returns results in the 'data' array. Limit to top 15 matches.
+    const fetchedCards = data.data || []
+    const limitedCards = fetchedCards.slice(0, 15)
+    
+    for (const card of limitedCards) {
       if (!seenNames.has(card.name)) {
         seenNames.add(card.name)
-        uniqueCards.push(card)
+        
+        // Handle double-faced cards by falling back to the front face's image_uris safely
+        const imageUrl = card.image_uris?.normal || card.card_faces?.[0]?.image_uris?.normal || ''
+        const manaCost = card.mana_cost || card.card_faces?.[0]?.mana_cost || ''
+        const colors = card.colors || card.card_faces?.[0]?.colors || []
+        
+        uniqueCards.push({
+          id: card.id,
+          name: card.name,
+          manaCost: manaCost,
+          type: card.type_line,
+          imageUrl: imageUrl,
+          colors: colors,
+          colorIdentity: card.color_identity || []
+        })
       }
     }
     
