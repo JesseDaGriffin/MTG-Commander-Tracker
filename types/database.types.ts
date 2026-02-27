@@ -33,6 +33,7 @@ export interface Database {
         Row: {
           id: string
           created_at: string
+          deleted_at: string | null
           player_id: string
           commander_name: string
           commander_image_url: string | null
@@ -41,6 +42,7 @@ export interface Database {
         Insert: {
           id?: string
           created_at?: string
+          deleted_at?: string | null
           player_id: string
           commander_name: string
           commander_image_url?: string | null
@@ -49,6 +51,7 @@ export interface Database {
         Update: {
           id?: string
           created_at?: string
+          deleted_at?: string | null
           player_id?: string
           commander_name?: string
           commander_image_url?: string | null

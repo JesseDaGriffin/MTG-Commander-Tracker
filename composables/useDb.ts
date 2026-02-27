@@ -35,6 +35,7 @@ export const useDb = () => {
           *,
           players ( name )
         `)
+        .is('deleted_at', null)
         .order('created_at', { ascending: false })
         
       if (error) console.error(error)
@@ -54,6 +55,17 @@ export const useDb = () => {
         
       if (error) throw error
       return data[0]
+    },
+    
+    async deleteDeck(deckId: string) {
+      if (!user.value) throw new Error('Not authenticated')
+      const { error } = await supabase
+        .from('decks')
+        .update({ deleted_at: new Date().toISOString() })
+        .eq('id', deckId)
+        
+      if (error) throw error
+      return true
     },
     
     async getGames() {
