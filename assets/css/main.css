@@ -1,45 +1,57 @@
 :root {
   /* Colors */
-  --bg-primary: #0f172a; /* Slate 900 */
-  --bg-secondary: #1e293b; /* Slate 800 */
-  --bg-tertiary: #334155; /* Slate 700 */
-  
-  --text-primary: #f8fafc; /* Slate 50 */
-  --text-secondary: #94a3b8; /* Slate 400 */
-  --text-muted: #64748b; /* Slate 500 */
-  
-  --accent-primary: #6366f1; /* Indigo 500 */
-  --accent-hover: #4f46e5; /* Indigo 600 */
-  
+  --bg-primary: #090e17;
+  /* Very Dark Blue */
+  --bg-secondary: #111b2d;
+  /* Dark Blue */
+  --bg-tertiary: #1a2a47;
+  /* Lighter Dark Blue */
+
+  --text-primary: #f0f8ff;
+  /* Alice Blue */
+  --text-secondary: #94a3b8;
+  /* Slate 400 */
+  --text-muted: #64748b;
+  /* Slate 500 */
+
+  --accent-primary: #0ea5e9;
+  /* Sky 500 / Arcane Cyan */
+  --accent-hover: #0284c7;
+  /* Sky 600 */
+
   --mtg-white: #f0e6d2;
-  --mtg-blue: #c1d8e9;
+  --mtg-blue: #0ea5e9;
   --mtg-black: #cac5c0;
   --mtg-red: #fabea6;
   --mtg-green: #c4d3ca;
 
-  --border-color: #334155;
-  
+  --border-color: #1e2e4f;
+
   /* Radii */
   --radius-sm: 0.375rem;
   --radius-md: 0.5rem;
   --radius-lg: 0.75rem;
   --radius-xl: 1rem;
-  
+
   /* Shadows */
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-  --shadow-glow: 0 0 15px -3px rgba(99, 102, 241, 0.4);
-  
+  --shadow-glow: 0 0 15px -3px rgba(14, 165, 233, 0.4);
+  /* Cyan/Blue Glow */
+
   /* Typography */
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
-  
+
   /* Spacing */
   --header-height: 4rem;
-  --nav-height: 4rem; /* For bottom mobile nav */
+  --nav-height: 4rem;
+  /* For bottom mobile nav */
 }
 
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -53,11 +65,16 @@ body {
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;
   /* Mobile-first padding bottom to allow for bottom nav */
-  padding-bottom: var(--nav-height); 
+  padding-bottom: var(--nav-height);
 }
 
 /* Typography styles */
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-weight: 700;
   line-height: 1.2;
   color: var(--text-primary);
@@ -108,15 +125,16 @@ a:hover {
 }
 
 @media (min-width: 768px) {
+
   /* Reset body padding for desktop where bottom nav isn't used */
   body {
     padding-bottom: 0;
   }
-  
+
   .desktop-only {
     display: block;
   }
-  
+
   .mobile-only {
     display: none;
   }
@@ -157,6 +175,75 @@ a:hover {
   border-color: var(--text-muted);
 }
 
+/* Spacing Utilities */
+.m-0 {
+  margin: 0;
+}
+
+.mt-2 {
+  margin-top: 0.5rem;
+}
+
+.mt-4 {
+  margin-top: 1rem;
+}
+
+.mt-6 {
+  margin-top: 1.5rem;
+}
+
+.mb-2 {
+  margin-bottom: 0.5rem;
+}
+
+.mb-4 {
+  margin-bottom: 1rem;
+}
+
+.mb-6 {
+  margin-bottom: 1.5rem;
+}
+
+.mr-1 {
+  margin-right: 0.25rem;
+}
+
+.mr-2 {
+  margin-right: 0.5rem;
+}
+
+.mr-4 {
+  margin-right: 1rem;
+}
+
+.ml-2 {
+  margin-left: 0.5rem;
+}
+
+.ml-4 {
+  margin-left: 1rem;
+}
+
+.p-2 {
+  padding: 0.5rem;
+}
+
+.p-4 {
+  padding: 1rem;
+}
+
+.p-6 {
+  padding: 1.5rem;
+}
+
+.pb-2 {
+  padding-bottom: 0.5rem;
+}
+
+.pb-4 {
+  padding-bottom: 1rem;
+}
+
 /* Forms */
 .form-group {
   margin-bottom: 1rem;
@@ -189,8 +276,15 @@ a:hover {
 
 /* Animations */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .animate-fade-in {

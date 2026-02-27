@@ -60,7 +60,7 @@
       <div v-else class="empty-state">
         <Icon name="mdi:account-group-outline" class="empty-icon" />
         <p>No players added yet.</p>
-        <button class="btn btn-primary mt-4" @click="showAddForm = true">Add Your First Player</button>
+        <button class="btn btn-primary mt-6" @click="showAddForm = true">Add Your First Player</button>
       </div>
     </div>
   </div>
@@ -134,6 +134,10 @@ onMounted(() => {
 
 .mb-4 {
   margin-bottom: 1rem;
+}
+
+.mt-4 {
+  margin-top: 1.5rem;
 }
 
 .mr-2 {

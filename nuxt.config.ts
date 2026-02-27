@@ -9,13 +9,14 @@ export default defineNuxtConfig({
 
   app: {
     head: {
-      title: 'MTG Commander Tracker',
+      title: 'Arcane Ledger',
       meta: [
         { charset: 'utf-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' },
         { name: 'description', content: 'Track your Magic the Gathering Commander games and stats' }
       ],
       link: [
+        { rel: 'icon', type: 'image/png', href: '/favicon.png' },
         {
           rel: 'stylesheet',
           href: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap'

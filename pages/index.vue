@@ -2,7 +2,7 @@
   <div class="dashboard page-fade-in">
     <div class="header-section">
       <h2 class="page-title">Dashboard</h2>
-      <p class="text-muted">Overview of your MTG Commander games</p>
+      <p class="text-muted">Overview of your Arcane Ledger games</p>
     </div>
 
     <div v-if="isLoading" class="text-center p-6 text-muted">
@@ -54,7 +54,7 @@
         <div v-else class="empty-state">
           <Icon name="mdi:inbox" class="empty-icon" />
           <p>No games recorded yet. Start playing!</p>
-          <NuxtLink to="/games" class="btn btn-primary mt-4">Record Game</NuxtLink>
+          <NuxtLink to="/games" class="btn btn-primary mt-6">Record Game</NuxtLink>
         </div>
       </div>
     </div>

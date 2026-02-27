@@ -2,7 +2,7 @@
   <div class="login-page">
     <div class="login-container card">
       <div class="text-center mb-6">
-        <Icon name="mdi:cards-playing" class="logo-icon mb-2" />
+        <img src="/favicon.png" alt="Arcane Ledger Logo" class="login-logo-img mb-2" />
         <h2 class="page-title">{{ isSignUp ? 'Create an Account' : 'Welcome Back' }}</h2>
         <p class="text-muted">
           {{ isSignUp ? 'Sign up to track your Commander games' : 'Sign in to access your dashboard' }}
@@ -135,6 +135,12 @@ const handleAuth = async () => {
 .logo-icon {
   font-size: 3rem;
   color: var(--accent-primary);
+}
+
+.login-logo-img {
+  width: 56px;
+  height: 56px;
+  border-radius: 8px;
 }
 
 .page-title {

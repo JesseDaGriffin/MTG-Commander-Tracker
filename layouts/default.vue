@@ -4,8 +4,8 @@
     <header class="app-header desktop-only glass">
       <div class="container header-content">
         <div class="logo">
-          <Icon name="mdi:cards-playing" class="logo-icon" />
-          <h1>MTG Commander</h1>
+          <img src="/favicon.png" alt="Arcane Ledger Logo" class="app-logo-img" />
+          <h1>Arcane Ledger</h1>
         </div>
         <nav class="desktop-nav">
           <NuxtLink to="/" class="nav-link">Dashboard</NuxtLink>
@@ -44,10 +44,6 @@
         <Icon name="mdi:sword-cross" class="nav-icon" />
         <span>Games</span>
       </NuxtLink>
-      <button class="bottom-nav-item" @click="signOut">
-        <Icon name="mdi:logout" class="nav-icon" />
-        <span>Sign Out</span>
-      </button>
     </nav>
   </div>
 </template>
@@ -94,6 +90,12 @@ const signOut = async () => {
 .logo-icon {
   font-size: 1.5rem;
   color: var(--accent-primary);
+}
+
+.app-logo-img {
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
 }
 
 .logo h1 {

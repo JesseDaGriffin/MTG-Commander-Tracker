@@ -93,6 +93,7 @@
       <div v-else class="empty-state">
         <Icon name="mdi:history" class="empty-icon" />
         <p>No games recorded yet.</p>
+        <button v-if="!showAddForm" class="btn btn-primary mt-6" @click="showAddForm = true">Record Your First Game</button>
       </div>
     </div>
   </div>
