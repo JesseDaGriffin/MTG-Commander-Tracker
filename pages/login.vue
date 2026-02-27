@@ -1,16 +1,16 @@
 <template>
-  <div class="login-page">
-    <div class="login-container card">
-      <div class="text-center mb-6">
-        <img src="/favicon.png" alt="Arcane Ledger Logo" class="login-logo-img mb-2" />
-        <h2 class="page-title">{{ isSignUp ? 'Create an Account' : 'Welcome Back' }}</h2>
+  <div class="min-h-screen flex items-center justify-center p-4 bg-primary">
+    <div class="w-full max-w-[400px] p-8 card">
+      <div class="text-center mb-8">
+        <img src="/favicon.png" alt="Arcane Ledger Logo" class="w-14 h-14 rounded-lg mx-auto mb-2" />
+        <h2 class="text-2xl mb-2 font-bold">{{ isSignUp ? 'Create an Account' : 'Welcome Back' }}</h2>
         <p class="text-muted">
           {{ isSignUp ? 'Sign up to track your Commander games' : 'Sign in to access your dashboard' }}
         </p>
       </div>
 
       <form @submit.prevent="handleAuth">
-        <div class="form-group mb-4">
+        <div class="form-group mb-6">
           <label class="form-label" for="email">Email</label>
           <input 
             id="email" 
@@ -23,7 +23,7 @@
           />
         </div>
 
-        <div class="form-group mb-6">
+        <div class="form-group mb-8">
           <label class="form-label" for="password">Password</label>
           <input 
             id="password" 
@@ -36,16 +36,16 @@
           />
         </div>
 
-        <div v-if="errorMsg" class="error-message mb-4">
+        <div v-if="errorMsg" class="text-red-500 text-sm bg-red-500/10 p-3 rounded-md border border-red-500/20 mb-6">
           {{ errorMsg }}
         </div>
         
-        <div v-if="successMsg" class="success-message mb-4">
+        <div v-if="successMsg" class="text-emerald-500 text-sm bg-emerald-500/10 p-3 rounded-md border border-emerald-500/20 mb-6">
           {{ successMsg }}
         </div>
 
-        <button type="submit" class="btn btn-primary w-full justify-center mb-4" :disabled="isLoading">
-          <Icon v-if="isLoading" name="mdi:loading" class="spin-icon mr-2" />
+        <button type="submit" class="btn btn-primary w-full flex justify-center mb-4" :disabled="isLoading">
+          <Icon v-if="isLoading" name="mdi:loading" class="animate-spin mr-2" />
           {{ isSignUp ? 'Sign Up' : 'Sign In' }}
         </button>
       </form>
@@ -53,7 +53,7 @@
       <div class="text-center mt-4">
         <p class="text-sm text-muted">
           {{ isSignUp ? 'Already have an account?' : 'Don\'t have an account?' }}
-          <button type="button" class="btn-link" @click="toggleMode" :disabled="isLoading">
+          <button type="button" class="bg-transparent border-none text-accent-primary font-medium cursor-pointer p-0 hover:underline" @click="toggleMode" :disabled="isLoading">
             {{ isSignUp ? 'Sign In' : 'Sign Up' }}
           </button>
         </p>
@@ -115,93 +115,3 @@ const handleAuth = async () => {
   }
 }
 </script>
-
-<style scoped>
-.login-page {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1rem;
-  background-color: var(--bg-primary);
-}
-
-.login-container {
-  width: 100%;
-  max-width: 400px;
-  padding: 2rem;
-}
-
-.logo-icon {
-  font-size: 3rem;
-  color: var(--accent-primary);
-}
-
-.login-logo-img {
-  width: 56px;
-  height: 56px;
-  border-radius: 8px;
-}
-
-.page-title {
-  font-size: 1.5rem;
-  margin-bottom: 0.5rem;
-}
-
-.mb-2 {
-  margin-bottom: 0.5rem;
-}
-
-.mb-4 {
-  margin-bottom: 1.5rem;
-}
-
-.mb-6 {
-  margin-bottom: 2rem;
-}
-
-.w-full {
-  width: 100%;
-}
-
-.justify-center {
-  display: flex;
-  justify-content: center;
-}
-
-.text-center {
-  text-align: center;
-}
-
-.error-message {
-  color: #ef4444;
-  font-size: 0.875rem;
-  background-color: rgba(239, 68, 68, 0.1);
-  padding: 0.75rem;
-  border-radius: var(--radius-md);
-  border: 1px solid rgba(239, 68, 68, 0.2);
-}
-
-.success-message {
-  color: #10b981;
-  font-size: 0.875rem;
-  background-color: rgba(16, 185, 129, 0.1);
-  padding: 0.75rem;
-  border-radius: var(--radius-md);
-  border: 1px solid rgba(16, 185, 129, 0.2);
-}
-
-.btn-link {
-  background: none;
-  border: none;
-  color: var(--accent-primary);
-  font-weight: 500;
-  cursor: pointer;
-  padding: 0;
-  font-size: inherit;
-}
-
-.btn-link:hover {
-  text-decoration: underline;
-}
-</style>

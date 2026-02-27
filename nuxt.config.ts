@@ -25,7 +25,7 @@ export default defineNuxtConfig({
     }
   },
 
-  modules: ['@nuxtjs/supabase'],
+  modules: ['@nuxtjs/supabase', '@nuxtjs/tailwindcss'],
   
   supabase: {
     redirectOptions: {

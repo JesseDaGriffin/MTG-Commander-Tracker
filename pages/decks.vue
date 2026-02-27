@@ -1,15 +1,15 @@
 <template>
-  <div class="page-fade-in">
-    <div class="header-section">
-      <h2 class="page-title">Decks</h2>
+  <div class="animate-fade-in">
+    <div class="mb-8">
+      <h2 class="text-3xl font-bold mb-1">Decks</h2>
       <p class="text-muted">Manage Commander decks for each player</p>
     </div>
 
-    <div class="card p-6 mb-6">
-      <h3 class="mb-4">Add New Deck</h3>
+    <div class="card p-6 mb-8">
+      <h3 class="text-xl font-bold mb-4">Add New Deck</h3>
       
-      <div class="form-group">
-        <label class="form-label" for="playerSelect">Select Player</label>
+      <div class="mb-5">
+        <label class="block text-sm font-medium text-secondary mb-2" for="playerSelect">Select Player</label>
         <select id="playerSelect" v-model="selectedPlayerId" class="form-input" :disabled="isLoading">
           <option value="">-- Choose a Player --</option>
           <option v-for="player in players" :key="player.id" :value="player.id">
@@ -18,19 +18,19 @@
         </select>
       </div>
 
-      <div class="form-group">
-        <label class="form-label">Find Commander</label>
+      <div class="mb-2">
+        <label class="block text-sm font-medium text-secondary mb-2">Find Commander</label>
         <CommanderSearch @select="onCommanderSelect" />
       </div>
       
-      <div v-if="selectedCommander" class="selected-commander-preview mt-4">
-        <div class="preview-card">
-          <img v-if="selectedCommander.imageUrl" :src="selectedCommander.imageUrl" :alt="selectedCommander.name" class="commander-img" />
-          <div class="preview-details">
-            <h4>{{ selectedCommander.name }}</h4>
-            <p class="text-muted text-sm">Selected Commander</p>
-            <button class="btn btn-primary mt-2" @click="saveDeck" :disabled="isSubmitting || !selectedPlayerId">
-              <Icon v-if="isSubmitting" name="mdi:loading" class="spin-icon mr-2" />
+      <div v-if="selectedCommander" class="mt-6 border border-border-color rounded-md p-4 bg-bg-tertiary">
+        <div class="flex flex-col sm:flex-row gap-4 items-center sm:items-start text-center sm:text-left">
+          <img v-if="selectedCommander.imageUrl" :src="selectedCommander.imageUrl" :alt="selectedCommander.name" class="w-32 rounded-lg shadow-md" />
+          <div class="flex-1">
+            <h4 class="text-lg font-bold text-primary">{{ selectedCommander.name }}</h4>
+            <p class="text-sm text-muted mb-4">Selected Commander</p>
+            <button class="btn btn-primary" @click="saveDeck" :disabled="isSubmitting || !selectedPlayerId">
+              <Icon v-if="isSubmitting" name="mdi:loading" class="animate-spin mr-2" />
               Save Deck
             </button>
           </div>
@@ -39,29 +39,29 @@
     </div>
 
     <div class="card p-6">
-      <div class="flex-between mb-4">
-        <h3>Deck Roster</h3>
+      <div class="flex items-center justify-between border-b border-border-color pb-4 mb-4">
+        <h3 class="text-xl font-bold">Deck Roster</h3>
       </div>
       
-      <div v-if="isLoading" class="text-center p-6 text-muted">
-        <Icon name="mdi:loading" class="spin-icon loading-large" />
+      <div v-if="isLoading" class="flex justify-center p-6 text-muted">
+        <Icon name="mdi:loading" class="animate-spin text-5xl" />
       </div>
 
-      <div v-else-if="decks.length > 0" class="deck-grid">
-        <div v-for="deck in decks" :key="deck.id" class="deck-card">
-          <div class="deck-image-wrapper">
-             <img v-if="deck.commander_image_url" :src="deck.commander_image_url" :alt="deck.commander_name" />
-             <Icon v-else name="mdi:cards-playing-outline" class="fallback-icon" />
+      <div v-else-if="decks.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div v-for="deck in decks" :key="deck.id" class="flex gap-4 p-4 rounded-md border border-border-color bg-bg-tertiary">
+          <div class="flex-shrink-0 w-20 h-28 bg-bg-secondary rounded border border-border-color flex items-center justify-center overflow-hidden">
+             <img v-if="deck.commander_image_url" :src="deck.commander_image_url" :alt="deck.commander_name" class="w-full h-full object-cover" />
+             <Icon v-else name="mdi:cards-playing-outline" class="text-3xl text-muted" />
           </div>
-          <div class="deck-info">
-            <div class="player-badge">{{ deck.players?.name || 'Unknown Player' }}</div>
-            <h4>{{ deck.commander_name }}</h4>
+          <div class="flex flex-col py-1">
+            <span class="inline-block bg-accent-primary/20 text-accent-primary text-xs font-semibold px-2 py-0.5 rounded w-fit mb-2">{{ deck.players?.name || 'Unknown Player' }}</span>
+            <h4 class="font-bold text-primary text-[0.95rem] leading-snug">{{ deck.commander_name }}</h4>
           </div>
         </div>
       </div>
 
-      <div v-else class="empty-state">
-        <Icon name="mdi:cards-outline" class="empty-icon" />
+      <div v-else class="flex flex-col items-center justify-center p-12 text-center text-muted">
+        <Icon name="mdi:cards-outline" class="text-5xl mb-4 opacity-50" />
         <p>No decks added yet.</p>
       </div>
     </div>
@@ -128,62 +128,3 @@ onMounted(() => {
   loadInitialData()
 })
 </script>
-
-<style scoped>
-.page-fade-in {
-  animation: fadeIn 0.4s ease forwards;
-}
-
-.header-section {
-  margin-bottom: 2rem;
-}
-
-.page-title {
-  font-size: 1.875rem;
-  margin-bottom: 0.25rem;
-}
-
-.text-muted {
-  color: var(--text-muted);
-}
-
-.p-6 {
-  padding: 1.5rem;
-}
-
-.mb-4 {
-  margin-bottom: 1rem;
-}
-
-.mr-2 {
-  margin-right: 0.5rem;
-}
-
-.flex-between {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid var(--border-color);
-  padding-bottom: 1rem;
-}
-
-h3 {
-  font-size: 1.25rem;
-}
-
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 3rem 1rem;
-  text-align: center;
-  color: var(--text-muted);
-}
-
-.empty-icon {
-  font-size: 3rem;
-  margin-bottom: 1rem;
-  opacity: 0.5;
-}
-</style>

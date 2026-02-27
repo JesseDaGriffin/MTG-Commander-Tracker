@@ -1,43 +1,43 @@
 <template>
-  <div class="page-fade-in">
-    <div class="header-section">
-      <h2 class="page-title">Games</h2>
+  <div class="animate-fade-in">
+    <div class="mb-8">
+      <h2 class="text-3xl font-bold mb-1">Games</h2>
       <p class="text-muted">Record new game results and view history</p>
     </div>
 
     <!-- Record Game Form -->
-    <div v-if="showAddForm" class="card p-6 mb-6 form-card">
-      <h3 class="mb-4">Record Game Result</h3>
+    <div v-if="showAddForm" class="card p-6 mb-6">
+      <h3 class="text-xl font-bold mb-4">Record Game Result</h3>
       <form @submit.prevent="submitGame">
-        <div class="form-group mb-4">
-          <label class="form-label">Players & Decks</label>
-          <div v-for="(participant, index) in newGame.participants" :key="index" class="participant-row mb-2">
-            <select v-model="participant.playerId" class="form-input participant-select" @change="onPlayerChange(index)">
+        <div class="mb-6">
+          <label class="block text-sm font-medium text-secondary mb-2">Players & Decks</label>
+          <div v-for="(participant, index) in newGame.participants" :key="index" class="flex gap-2 items-center mb-2">
+            <select v-model="participant.playerId" class="form-input flex-1" @change="onPlayerChange(index)">
               <option value="">-- Player --</option>
               <option v-for="player in players" :key="player.id" :value="player.id">
                 {{ player.name }}
               </option>
             </select>
             
-            <select v-model="participant.deckId" class="form-input participant-select" :disabled="!participant.playerId">
+            <select v-model="participant.deckId" class="form-input flex-1" :disabled="!participant.playerId">
               <option value="">-- Deck --</option>
               <option v-for="deck in getDecksForPlayer(participant.playerId)" :key="deck.id" :value="deck.id">
                 {{ deck.commander_name }}
               </option>
             </select>
             
-            <button v-if="newGame.participants.length > 2" type="button" class="btn-icon text-red" @click="removeParticipant(index)">
+            <button v-if="newGame.participants.length > 2" type="button" class="text-red-500 hover:bg-bg-tertiary p-2 rounded-md transition-colors" @click="removeParticipant(index)">
               <Icon name="mdi:close" />
             </button>
           </div>
           
-          <button v-if="newGame.participants.length < 6" type="button" class="btn btn-secondary mt-2 text-sm" @click="addParticipant">
+          <button v-if="newGame.participants.length < 6" type="button" class="btn btn-secondary text-sm mt-2" @click="addParticipant">
             <Icon name="mdi:plus" class="mr-1" /> Add Player
           </button>
         </div>
 
-        <div class="form-group mb-4">
-          <label class="form-label" for="winnerSelect">Winner</label>
+        <div class="mb-6">
+          <label class="block text-sm font-medium text-secondary mb-2" for="winnerSelect">Winner</label>
           <select id="winnerSelect" v-model="newGame.winnerId" class="form-input" required>
             <option value="">-- Select Winner --</option>
             <option v-for="participant in validParticipants" :key="participant.playerId" :value="participant.playerId">
@@ -47,15 +47,15 @@
           </select>
         </div>
         
-        <div class="form-group mb-4">
-          <label class="form-label" for="gameNotes">Notes (Optional)</label>
+        <div class="mb-8">
+          <label class="block text-sm font-medium text-secondary mb-2" for="gameNotes">Notes (Optional)</label>
           <textarea id="gameNotes" v-model="newGame.notes" class="form-input" rows="2" placeholder="Any memorable moments?"></textarea>
         </div>
 
-        <div class="form-actions">
+        <div class="flex gap-3 justify-end items-center">
           <button type="button" class="btn btn-secondary" @click="showAddForm = false" :disabled="isSubmitting">Cancel</button>
           <button type="submit" class="btn btn-primary" :disabled="isSubmitting || validParticipants.length < 2">
-            <Icon v-if="isSubmitting" name="mdi:loading" class="spin-icon mr-2" />
+            <Icon v-if="isSubmitting" name="mdi:loading" class="animate-spin mr-2" />
             Save Game
           </button>
         </div>
@@ -64,34 +64,34 @@
 
     <!-- Game History -->
     <div class="card p-6">
-      <div class="flex-between mb-4">
-        <h3>Game History</h3>
+      <div class="flex items-center justify-between border-b border-border-color pb-4 mb-4">
+        <h3 class="text-xl font-bold">Game History</h3>
         <button v-if="!showAddForm" class="btn btn-primary" @click="showAddForm = true">
           <Icon name="mdi:sword-cross" class="mr-2" />
           Record Game
         </button>
       </div>
       
-      <div v-if="isLoading" class="text-center p-6 text-muted">
-        <Icon name="mdi:loading" class="spin-icon loading-large" />
+      <div v-if="isLoading" class="flex justify-center p-6 text-muted">
+        <Icon name="mdi:loading" class="animate-spin text-5xl" />
       </div>
       
-      <div v-else-if="games.length > 0" class="game-list">
-        <div v-for="game in games" :key="game.id" class="game-card">
-          <div class="game-date">{{ new Date(game.played_on).toLocaleDateString() }}</div>
-          <div class="game-winner">
+      <div v-else-if="games.length > 0" class="flex flex-col gap-4">
+        <div v-for="game in games" :key="game.id" class="bg-bg-tertiary rounded-md p-5 border-l-4 border-l-accent-primary">
+          <div class="text-xs text-muted mb-2">{{ new Date(game.played_on).toLocaleDateString() }}</div>
+          <div class="text-lg font-semibold flex items-center">
             <span class="text-muted mr-2">Winner:</span>
-            <span class="winner-name">
-              <Icon name="mdi:crown" class="crown-icon" />
+            <span class="text-mtg-red flex items-center gap-1">
+              <Icon name="mdi:crown" class="text-amber-400" />
               {{ game.players?.name || 'Draw' }}
             </span>
           </div>
-          <p v-if="game.notes" class="game-notes text-muted text-sm mt-2">"{{ game.notes }}"</p>
+          <p v-if="game.notes" class="text-muted text-sm mt-3 italic">"{{ game.notes }}"</p>
         </div>
       </div>
       
-      <div v-else class="empty-state">
-        <Icon name="mdi:history" class="empty-icon" />
+      <div v-else class="flex flex-col items-center justify-center p-12 text-center text-muted">
+        <Icon name="mdi:history" class="text-5xl mb-4 opacity-50" />
         <p>No games recorded yet.</p>
         <button v-if="!showAddForm" class="btn btn-primary mt-6" @click="showAddForm = true">Record Your First Game</button>
       </div>
@@ -222,72 +222,3 @@ onMounted(() => {
   loadData()
 })
 </script>
-
-<style scoped>
-.participant-row {
-  display: flex;
-  gap: 0.5rem;
-  align-items: center;
-}
-
-.participant-select {
-  flex: 1;
-}
-
-.btn-icon {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: var(--radius-sm);
-  transition: background-color 0.2s ease;
-}
-
-.btn-icon:hover {
-  background-color: var(--bg-tertiary);
-}
-
-.text-red {
-  color: #ef4444;
-}
-
-.game-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.game-card {
-  background-color: var(--bg-tertiary);
-  border-radius: var(--radius-md);
-  padding: 1.25rem;
-  border-left: 4px solid var(--accent-primary);
-}
-
-.game-date {
-  font-size: 0.75rem;
-  color: var(--text-muted);
-  margin-bottom: 0.5rem;
-}
-
-.game-winner {
-  font-size: 1.125rem;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-}
-
-.winner-name {
-  color: var(--mtg-red); /* Using one of the MTG colors for winner highlight */
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-}
-
-.crown-icon {
-  color: #fbbf24; /* Amber 400 */
-}
-</style>

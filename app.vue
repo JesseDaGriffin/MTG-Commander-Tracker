@@ -1,15 +1,7 @@
 <template>
-  <div class="app-wrapper">
+  <div class="min-h-screen flex flex-col">
     <NuxtLayout>
       <NuxtPage />
     </NuxtLayout>
   </div>
 </template>
-
-<style>
-.app-wrapper {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-</style>

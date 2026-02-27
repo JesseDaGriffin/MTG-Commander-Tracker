@@ -1,58 +1,58 @@
 <template>
-  <div class="dashboard page-fade-in">
-    <div class="header-section">
-      <h2 class="page-title">Dashboard</h2>
+  <div class="animate-fade-in">
+    <div class="mb-8">
+      <h2 class="text-3xl font-bold mb-1">Dashboard</h2>
       <p class="text-muted">Overview of your Arcane Ledger games</p>
     </div>
 
     <div v-if="isLoading" class="text-center p-6 text-muted">
-      <Icon name="mdi:loading" class="spin-icon loading-large" />
+      <Icon name="mdi:loading" class="animate-spin text-5xl" />
     </div>
 
     <div v-else>
-      <div class="stats-grid">
-        <div class="stat-card card">
-          <Icon name="mdi:account-group" class="stat-icon" />
-          <div class="stat-info">
-            <h3>Total Players</h3>
-            <p class="stat-value">{{ metrics.totalPlayers }}</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-8">
+        <div class="card flex items-center gap-5 p-6 border-l-4 border-l-accent-primary">
+          <Icon name="mdi:account-group" class="text-4xl text-accent-primary bg-indigo-500/10 p-2 rounded-md" />
+          <div>
+            <h3 class="text-sm text-secondary font-medium mb-1">Total Players</h3>
+            <p class="text-2xl font-bold text-primary">{{ metrics.totalPlayers }}</p>
           </div>
         </div>
-        <div class="stat-card card">
-          <Icon name="mdi:cards" class="stat-icon" />
-          <div class="stat-info">
-            <h3>Total Decks</h3>
-            <p class="stat-value">{{ metrics.totalDecks }}</p>
+        <div class="card flex items-center gap-5 p-6 border-l-4 border-l-accent-primary">
+          <Icon name="mdi:cards" class="text-4xl text-accent-primary bg-indigo-500/10 p-2 rounded-md" />
+          <div>
+            <h3 class="text-sm text-secondary font-medium mb-1">Total Decks</h3>
+            <p class="text-2xl font-bold text-primary">{{ metrics.totalDecks }}</p>
           </div>
         </div>
-        <div class="stat-card card">
-          <Icon name="mdi:sword-cross" class="stat-icon" />
-          <div class="stat-info">
-            <h3>Games Played</h3>
-            <p class="stat-value">{{ metrics.totalGames }}</p>
+        <div class="card flex items-center gap-5 p-6 border-l-4 border-l-accent-primary">
+          <Icon name="mdi:sword-cross" class="text-4xl text-accent-primary bg-indigo-500/10 p-2 rounded-md" />
+          <div>
+            <h3 class="text-sm text-secondary font-medium mb-1">Games Played</h3>
+            <p class="text-2xl font-bold text-primary">{{ metrics.totalGames }}</p>
           </div>
         </div>
       </div>
       
-      <div class="recent-activity card mt-6">
-        <h3 class="section-title">Recent Games</h3>
+      <div class="card mt-6">
+        <h3 class="text-xl mb-4 border-b border-border-color pb-2">Recent Games</h3>
         
-        <div v-if="recentGames.length > 0" class="game-list pb-2">
-          <div v-for="game in recentGames" :key="game.id" class="recent-game-item">
-            <div class="game-date">{{ new Date(game.played_on).toLocaleDateString() }}</div>
-            <div class="game-winner">
+        <div v-if="recentGames.length > 0" class="flex flex-col gap-4 pb-2">
+          <div v-for="game in recentGames" :key="game.id" class="bg-bg-tertiary rounded-md p-5 border-l-4 border-l-accent-primary">
+            <div class="text-xs text-muted mb-2">{{ new Date(game.played_on).toLocaleDateString() }}</div>
+            <div class="text-lg font-semibold flex items-center">
               <span class="text-muted mr-2">Winner:</span>
-              <span class="winner-name">
-                <Icon name="mdi:crown" class="crown-icon" />
+              <span class="text-mtg-red flex items-center gap-1">
+                <Icon name="mdi:crown" class="text-amber-400" />
                 {{ game.players?.name || 'Draw' }}
               </span>
             </div>
           </div>
-          <NuxtLink to="/games" class="btn btn-secondary mt-4 w-full justify-center">View All Games</NuxtLink>
+          <NuxtLink to="/games" class="btn btn-secondary mt-4 w-full flex justify-center">View All Games</NuxtLink>
         </div>
 
-        <div v-else class="empty-state">
-          <Icon name="mdi:inbox" class="empty-icon" />
+        <div v-else class="flex flex-col items-center justify-center p-12 text-center text-muted">
+          <Icon name="mdi:inbox" class="text-5xl mb-4 opacity-50" />
           <p>No games recorded yet. Start playing!</p>
           <NuxtLink to="/games" class="btn btn-primary mt-6">Record Game</NuxtLink>
         </div>
@@ -97,89 +97,3 @@ onMounted(async () => {
   }
 })
 </script>
-
-<style scoped>
-.page-fade-in {
-  animation: fadeIn 0.4s ease forwards;
-}
-
-.header-section {
-  margin-bottom: 2rem;
-}
-
-.page-title {
-  font-size: 1.875rem;
-  margin-bottom: 0.25rem;
-}
-
-.text-muted {
-  color: var(--text-muted);
-}
-
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 2rem;
-}
-
-.stat-card {
-  display: flex;
-  align-items: center;
-  gap: 1.25rem;
-  padding: 1.5rem;
-  border-left: 4px solid var(--accent-primary);
-}
-
-.stat-icon {
-  font-size: 2.5rem;
-  color: var(--accent-primary);
-  background: rgba(99, 102, 241, 0.1);
-  padding: 0.5rem;
-  border-radius: var(--radius-md);
-}
-
-.stat-info h3 {
-  font-size: 0.875rem;
-  color: var(--text-secondary);
-  font-weight: 500;
-  margin-bottom: 0.25rem;
-}
-
-.stat-value {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--text-primary);
-}
-
-.mt-6 {
-  margin-top: 1.5rem;
-}
-
-.mt-4 {
-  margin-top: 1rem;
-}
-
-.section-title {
-  font-size: 1.25rem;
-  margin-bottom: 1rem;
-  border-bottom: 1px solid var(--border-color);
-  padding-bottom: 0.5rem;
-}
-
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 3rem 1rem;
-  text-align: center;
-  color: var(--text-muted);
-}
-
-.empty-icon {
-  font-size: 3rem;
-  margin-bottom: 1rem;
-  opacity: 0.5;
-}
-</style>
