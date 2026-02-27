@@ -5,7 +5,7 @@
       <p class="text-muted">Manage Commander decks for each player</p>
     </div>
 
-    <div class="card p-6 mb-8">
+    <div class="card p-6 mb-8 relative z-20">
       <h3 class="text-xl font-bold mb-4">Add New Deck</h3>
       
       <div class="mb-5">
@@ -52,25 +52,13 @@
           <h4 class="text-lg font-bold text-secondary mb-4 border-b border-border-color pb-1 inline-block">{{ playerName }}'s Decks</h4>
           
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div v-for="deck in playerDecks" :key="deck.id" class="relative flex gap-4 p-4 rounded-md border border-border-color bg-bg-tertiary hover:border-accent-primary transition-colors pr-14 group">
-              <div class="flex-shrink-0 w-16 h-24 bg-bg-secondary rounded border border-border-color flex items-center justify-center overflow-hidden">
-                 <img v-if="deck.commander_image_url" :src="deck.commander_image_url" :alt="deck.commander_name" class="w-full h-full object-cover" />
-                 <Icon v-else name="mdi:cards-playing-outline" class="text-3xl text-muted" />
-              </div>
-              <div class="flex flex-col py-1 justify-center flex-1">
-                <h4 class="font-bold text-primary text-[0.95rem] leading-snug">{{ deck.commander_name }}</h4>
-              </div>
-              
-              <button 
-                @click.stop="deleteDeck(deck)" 
-                class="absolute right-3 top-3 text-white bg-red-600 hover:bg-red-500 hover:scale-105 w-6 h-6 rounded-full transition-all flex items-center justify-center shadow-md shadow-red-900/40 opacity-80 hover:opacity-100" 
-                title="Delete Deck" 
-                :disabled="isDeleting === deck.id"
-              >
-                <Icon v-if="isDeleting === deck.id" name="mdi:loading" class="animate-spin text-base" />
-                <Icon v-else name="mdi:delete-outline" class="text-base" />
-              </button>
-            </div>
+              <DeckCard 
+                v-for="deck in playerDecks" 
+                :key="deck.id" 
+                :deck="deck" 
+                :is-deleting="isDeleting === deck.id" 
+                @delete="deleteDeck" 
+              />
           </div>
         </div>
       </div>

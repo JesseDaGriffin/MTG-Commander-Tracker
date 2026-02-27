@@ -77,17 +77,11 @@
       </div>
       
       <div v-else-if="games.length > 0" class="flex flex-col gap-4">
-        <div v-for="game in games" :key="game.id" class="bg-bg-tertiary rounded-md p-5 border-l-4 border-l-accent-primary">
-          <div class="text-xs text-muted mb-2">{{ new Date(game.played_on).toLocaleDateString() }}</div>
-          <div class="text-lg font-semibold flex items-center">
-            <span class="text-muted mr-2">Winner:</span>
-            <span class="text-mtg-red flex items-center gap-1">
-              <Icon name="mdi:crown" class="text-amber-400" />
-              {{ game.players?.name || 'Draw' }}
-            </span>
-          </div>
-          <p v-if="game.notes" class="text-muted text-sm mt-3 italic">"{{ game.notes }}"</p>
-        </div>
+        <GameHistoryItem 
+          v-for="game in games" 
+          :key="game.id" 
+          :game="game" 
+        />
       </div>
       
       <div v-else class="flex flex-col items-center justify-center p-12 text-center text-muted">
