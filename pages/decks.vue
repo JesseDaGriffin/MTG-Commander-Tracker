@@ -20,7 +20,7 @@
 
       <div class="mb-2">
         <label class="block text-sm font-medium text-secondary mb-2">Find Commander</label>
-        <CommanderSearch @select="onCommanderSelect" />
+        <CommanderSearch ref="commanderSearchRef" @select="onCommanderSelect" />
       </div>
       
       <div v-if="selectedCommander" class="mt-6 border border-border-color rounded-md p-4 bg-bg-tertiary">
@@ -79,6 +79,7 @@ const selectedPlayerId = ref('')
 const isSubmitting = ref(false)
 const decks = ref([])
 const isLoading = ref(true)
+const commanderSearchRef = ref(null)
 
 const loadInitialData = async () => {
   isLoading.value = true
@@ -115,6 +116,9 @@ const saveDeck = async () => {
     )
     selectedCommander.value = null
     selectedPlayerId.value = ''
+    if (commanderSearchRef.value) {
+      commanderSearchRef.value.clearSearch()
+    }
     await loadInitialData()
   } catch (error) {
     console.error('Error saving deck:', error)

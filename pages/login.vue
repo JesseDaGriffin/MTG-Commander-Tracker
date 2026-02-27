@@ -99,6 +99,8 @@ const handleAuth = async () => {
       })
       if (error) throw error
       successMsg.value = 'Check your email for the confirmation link!'
+      email.value = ''
+      password.value = ''
     } else {
       const { error } = await supabase.auth.signInWithPassword({
         email: email.value,

@@ -95,7 +95,6 @@ const submitPlayer = async () => {
   try {
     await db.addPlayer(newPlayerName.value.trim())
     newPlayerName.value = ''
-    showAddForm.value = false
     await loadPlayers() // Reload the list
   } catch (error) {
     console.error('Failed to add player:', error)

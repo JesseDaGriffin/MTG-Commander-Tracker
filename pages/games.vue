@@ -203,7 +203,6 @@ const submitGame = async () => {
     if (partError) throw partError
 
     // Success
-    showAddForm.value = false
     newGame.value = {
       participants: [{ playerId: '', deckId: '' }, { playerId: '', deckId: '' }, { playerId: '', deckId: '' }, { playerId: '', deckId: '' }],
       winnerId: '',

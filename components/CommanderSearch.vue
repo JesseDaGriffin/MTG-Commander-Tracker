@@ -107,6 +107,16 @@ const selectCommander = (card) => {
   showResults.value = false
 }
 
+const clearSearch = () => {
+  searchQuery.value = ''
+  results.value = []
+  showResults.value = false
+}
+
+defineExpose({
+  clearSearch
+})
+
 // Close dropdown when clicking outside
 onMounted(() => {
   document.addEventListener('click', (e) => {
