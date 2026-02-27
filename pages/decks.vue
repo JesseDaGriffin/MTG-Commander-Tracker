@@ -25,7 +25,13 @@
       
       <div v-if="selectedCommander" class="mt-6 border border-border-color rounded-md p-4 bg-bg-tertiary">
         <div class="flex flex-col sm:flex-row gap-4 items-center sm:items-start text-center sm:text-left">
-          <img v-if="selectedCommander.imageUrl" :src="selectedCommander.imageUrl" :alt="selectedCommander.name" class="w-32 rounded-lg shadow-md" />
+          <img 
+            v-if="selectedCommander.imageUrl" 
+            :src="selectedCommander.imageUrl" 
+            :alt="selectedCommander.name" 
+            class="w-32 rounded-lg shadow-md cursor-pointer hover:shadow-glow hover:ring-2 hover:ring-accent-primary transition-all" 
+            @click="onSelectedCommanderPreviewClick"
+          />
           <div class="flex-1">
             <h4 class="text-lg font-bold text-primary">{{ selectedCommander.name }}</h4>
             <p class="text-sm text-muted mb-4">Selected Commander</p>
@@ -58,6 +64,7 @@
                 :deck="deck" 
                 :is-deleting="isDeleting === deck.id" 
                 @delete="deleteDeck" 
+                @preview="openPreview"
               />
           </div>
         </div>
@@ -68,6 +75,13 @@
         <p>No decks added yet.</p>
       </div>
     </div>
+    
+    <CardPreview 
+      :is-open="previewState.isOpen"
+      :image-url="previewState.url"
+      :origin-rect="previewState.rect"
+      @close="previewState.isOpen = false"
+    />
   </div>
 </template>
 
@@ -84,6 +98,26 @@ const isDeleting = ref(null)
 const decks = ref([])
 const isLoading = ref(true)
 const commanderSearchRef = ref(null)
+
+const previewState = ref({
+  isOpen: false,
+  url: '',
+  rect: null
+})
+
+const openPreview = ({ url, rect }) => {
+  previewState.value = {
+    isOpen: true,
+    url,
+    rect
+  }
+}
+
+const onSelectedCommanderPreviewClick = (e) => {
+  if (!selectedCommander.value?.imageUrl) return
+  const rect = e.currentTarget.getBoundingClientRect()
+  openPreview({ url: selectedCommander.value.imageUrl, rect })
+}
 
 const groupedDecks = computed(() => {
   const groups = {}
