@@ -1,6 +1,6 @@
 <template>
     <div
-        class="relative flex gap-4 p-4 rounded-md border border-border-color bg-bg-tertiary hover:border-accent-primary transition-colors pr-14 group"
+        class="relative flex gap-4 p-4 rounded-md border border-border-color bg-tertiary hover:border-accent-primary transition-colors pr-14 group"
     >
         <div
             class="flex-shrink-0 w-16 h-24 bg-bg-secondary rounded border border-border-color flex items-center justify-center overflow-hidden"

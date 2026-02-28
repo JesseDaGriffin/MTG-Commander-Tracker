@@ -3,7 +3,7 @@
         <div class="relative flex items-center">
             <Icon
                 name="mdi:magnify"
-                class="absolute left-4 top-1/2 -translate-y-1/2 text-muted text-xl pointer-events-none"
+                class="absolute left-4 top-1/2 -translate-y-1/2 text-muted text-xl pointer-events-none z-10"
             />
             <BaseInput
                 type="text"
@@ -28,7 +28,7 @@
             <div
                 v-for="card in results"
                 :key="card.id"
-                class="flex gap-4 p-3 rounded-md cursor-pointer transition-colors hover:bg-bg-tertiary"
+                class="flex gap-4 p-3 rounded-md cursor-pointer transition-colors hover:bg-tertiary"
                 @click="selectCommander(card)"
             >
                 <div

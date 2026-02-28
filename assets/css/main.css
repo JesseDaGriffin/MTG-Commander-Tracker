@@ -184,6 +184,8 @@ a:hover {
         border-radius: var(--radius-md);
         color: var(--text-primary);
         font-family: inherit;
+        position: relative;
+        z-index: 1;
         transition:
             border-color 0.2s ease,
             box-shadow 0.2s ease;
@@ -193,6 +195,7 @@ a:hover {
         outline: none;
         border-color: var(--accent-primary);
         box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+        z-index: 2;
     }
 
     select.form-input {

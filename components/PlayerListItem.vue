@@ -1,6 +1,6 @@
 <template>
     <div
-        class="flex items-center gap-4 bg-bg-tertiary p-4 rounded-md border border-border-color"
+        class="flex items-center gap-4 bg-tertiary p-4 rounded-md border border-border-color"
     >
         <div
             class="flex-shrink-0 w-12 h-12 bg-accent-primary text-white rounded-full flex items-center justify-center font-bold text-lg"

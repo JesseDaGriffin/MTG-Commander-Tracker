@@ -18,16 +18,14 @@
                     id="playerSelect"
                     v-model="selectedPlayerId"
                     :disabled="isLoading"
-                >
-                    <option value="">-- Choose a Player --</option>
-                    <option
-                        v-for="player in players"
-                        :key="player.id"
-                        :value="player.id"
-                    >
-                        {{ player.name }}
-                    </option>
-                </BaseSelect>
+                    placeholder="-- Choose a Player --"
+                    :options="
+                        players.map((player) => ({
+                            label: player.name,
+                            value: player.id,
+                        }))
+                    "
+                />
             </div>
 
             <div class="mb-2">
@@ -42,7 +40,7 @@
 
             <div
                 v-if="selectedCommander"
-                class="mt-6 border border-border-color rounded-md p-4 bg-bg-tertiary"
+                class="mt-6 border border-border-color rounded-md p-4 bg-tertiary"
             >
                 <div
                     class="flex flex-col sm:flex-row gap-4 items-center sm:items-start text-center sm:text-left"
@@ -85,7 +83,7 @@
                 <h3 class="text-xl font-bold">Deck Roster</h3>
                 <div class="relative w-full max-w-xs">
                     <div
-                        class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+                        class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10"
                     >
                         <Icon name="mdi:magnify" class="text-muted" />
                     </div>

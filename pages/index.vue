@@ -75,7 +75,7 @@
                     <div
                         v-for="game in recentGames"
                         :key="game.id"
-                        class="bg-bg-tertiary rounded-md p-5 border-l-4 border-l-accent-primary"
+                        class="bg-tertiary rounded-md p-5 border-l-4 border-l-accent-primary"
                     >
                         <div class="text-xs text-muted mb-2">
                             {{ new Date(game.played_on).toLocaleDateString() }}

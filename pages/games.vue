@@ -17,50 +17,45 @@
                         v-for="(participant, index) in newGame.participants"
                         :key="index"
                         class="flex gap-2 items-center mb-2"
+                        :style="{ zIndex: 50 - index, position: 'relative' }"
                     >
                         <BaseSelect
                             v-model="participant.playerId"
                             class="flex-1"
                             @change="onPlayerChange(index)"
-                        >
-                            <option value="">-- Player --</option>
-                            <option
-                                v-for="player in players"
-                                :key="player.id"
-                                :value="player.id"
-                                :disabled="
-                                    newGame.participants.some(
+                            placeholder="-- Player --"
+                            :options="
+                                players.map((player) => ({
+                                    label: player.name,
+                                    value: player.id,
+                                    disabled: newGame.participants.some(
                                         (p, i) =>
                                             i !== index &&
                                             p.playerId === player.id,
-                                    )
-                                "
-                            >
-                                {{ player.name }}
-                            </option>
-                        </BaseSelect>
+                                    ),
+                                }))
+                            "
+                        />
 
                         <BaseSelect
                             v-model="participant.deckId"
                             class="flex-1"
                             :disabled="!participant.playerId"
-                        >
-                            <option value="">-- Deck --</option>
-                            <option
-                                v-for="deck in getDecksForPlayer(
-                                    participant.playerId,
-                                )"
-                                :key="deck.id"
-                                :value="deck.id"
-                            >
-                                {{ deck.commander_name }}
-                            </option>
-                        </BaseSelect>
+                            placeholder="-- Deck --"
+                            :options="
+                                getDecksForPlayer(participant.playerId).map(
+                                    (deck) => ({
+                                        label: deck.commander_name,
+                                        value: deck.id,
+                                    }),
+                                )
+                            "
+                        />
 
                         <button
                             v-if="newGame.participants.length > 2"
                             type="button"
-                            class="text-red-500 hover:bg-bg-tertiary p-2 rounded-md transition-colors"
+                            class="text-red-500 hover:bg-tertiary p-2 rounded-md transition-colors"
                             @click="removeParticipant(index)"
                         >
                             <Icon name="mdi:close" />
@@ -87,17 +82,21 @@
                         id="winnerSelect"
                         v-model="newGame.winnerId"
                         required
-                    >
-                        <option value="">-- Select Winner --</option>
-                        <option
-                            v-for="participant in validParticipants"
-                            :key="participant.playerId"
-                            :value="participant.playerId"
-                        >
-                            {{ getPlayerName(participant.playerId) }}
-                        </option>
-                        <option value="draw">-- Draw / No Winner --</option>
-                    </BaseSelect>
+                        placeholder="-- Select Winner --"
+                        :options="
+                            validParticipants
+                                .map((p) => ({
+                                    label: getPlayerName(p.playerId),
+                                    value: p.playerId,
+                                }))
+                                .concat([
+                                    {
+                                        label: '-- Draw / No Winner --',
+                                        value: 'draw',
+                                    },
+                                ])
+                        "
+                    />
                 </div>
 
                 <div class="mb-8">
