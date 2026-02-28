@@ -7,13 +7,23 @@
             <div
                 class="container mx-auto px-4 flex items-center justify-between h-16"
             >
-                <div class="flex items-center gap-2 text-primary">
-                    <img
-                        src="/favicon.png"
-                        alt="Arcane Ledger Logo"
-                        class="w-7 h-7 rounded"
-                    />
-                    <h1 class="text-xl font-bold m-0 tracking-tight">
+                <div
+                    class="flex items-center gap-3 text-primary group cursor-pointer"
+                    @click="router.push('/')"
+                >
+                    <div class="relative">
+                        <div
+                            class="absolute inset-0 bg-accent-primary/50 blur-[8px] rounded-full scale-125 opacity-20 group-hover:opacity-100 transition-opacity duration-300"
+                        ></div>
+                        <img
+                            src="/favicon.png"
+                            alt="Arcane Ledger Logo"
+                            class="relative w-8 h-8 rounded drop-shadow-md transition-transform duration-300 group-hover:scale-105"
+                        />
+                    </div>
+                    <h1
+                        class="text-xl font-bold m-0 tracking-tight transition-colors duration-300 group-hover:text-white"
+                    >
                         Arcane Ledger
                     </h1>
                 </div>

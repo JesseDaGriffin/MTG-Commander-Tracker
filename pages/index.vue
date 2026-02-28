@@ -1,8 +1,45 @@
 <template>
     <div class="animate-fade-in">
-        <div class="mb-8">
-            <h2 class="text-3xl font-bold mb-1">Dashboard</h2>
-            <p class="text-muted">Overview of your Arcane Ledger games</p>
+        <!-- Dashboard Banner -->
+        <div
+            class="relative overflow-hidden bg-tertiary border border-border-color rounded-xl p-6 sm:p-10 mb-8 flex items-center justify-between shadow-lg"
+        >
+            <!-- Background watermark -->
+            <img
+                src="/favicon.png"
+                alt=""
+                class="absolute -right-10 -bottom-20 w-80 h-80 opacity-5 blur-md pointer-events-none mix-blend-screen"
+                aria-hidden="true"
+            />
+
+            <div class="relative z-10 w-full sm:w-2/3">
+                <span
+                    class="inline-block px-3 py-1 bg-accent-primary/10 text-accent-primary text-xs font-semibold rounded-full mb-3 border border-accent-primary/20"
+                >
+                    Arcane Ledger
+                </span>
+                <h2
+                    class="text-3xl sm:text-4xl font-extrabold mb-2 text-white tracking-tight"
+                >
+                    Dashboard
+                </h2>
+                <p class="text-muted text-base sm:text-lg max-w-lg">
+                    Overview of your Commander games, player statistics, and
+                    recent battle history.
+                </p>
+            </div>
+
+            <!-- Prominent Logo -->
+            <div class="hidden sm:block relative z-10 shrink-0 pr-4">
+                <div
+                    class="absolute inset-0 bg-accent-primary/20 blur-2xl rounded-full scale-150"
+                ></div>
+                <img
+                    src="/favicon.png"
+                    alt="Arcane Ledger Logo"
+                    class="relative w-28 h-28 object-contain drop-shadow-2xl transform -rotate-6 transition-transform hover:rotate-0 hover:scale-105 duration-500"
+                />
+            </div>
         </div>
 
         <div v-if="isLoading" class="text-center p-6 text-muted">

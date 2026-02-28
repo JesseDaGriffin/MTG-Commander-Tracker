@@ -1,9 +1,12 @@
 <template>
     <div class="animate-fade-in">
-        <div class="mb-8">
-            <h2 class="text-3xl font-bold mb-1">Decks</h2>
-            <p class="text-muted">Manage Commander decks for each player</p>
-        </div>
+        <!-- Header Banner -->
+        <PageHeader
+            title="Decks"
+            label="Armory"
+            description="Manage Commander decks for each player."
+            icon="mdi:cards"
+        />
 
         <div class="card p-6 mb-8 relative z-20">
             <h3 class="text-xl font-bold mb-4">Add New Deck</h3>

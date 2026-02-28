@@ -1,9 +1,12 @@
 <template>
     <div class="animate-fade-in">
-        <div class="mb-8">
-            <h2 class="text-3xl font-bold mb-1">Games</h2>
-            <p class="text-muted">Record new game results and view history</p>
-        </div>
+        <!-- Header Banner -->
+        <PageHeader
+            title="Games"
+            label="Match History"
+            description="Record new game results and view history."
+            icon="mdi:sword-cross"
+        />
 
         <!-- Record Game Form -->
         <div v-if="showAddForm" class="card p-6 mb-6">

@@ -2,11 +2,16 @@
     <div class="min-h-screen flex items-center justify-center p-4 bg-primary">
         <div class="w-full max-w-[400px] p-8 card">
             <div class="text-center mb-8">
-                <img
-                    src="/favicon.png"
-                    alt="Arcane Ledger Logo"
-                    class="w-14 h-14 rounded-lg mx-auto mb-2"
-                />
+                <div class="relative inline-block mb-4">
+                    <div
+                        class="absolute inset-0 bg-accent-primary/30 blur-2xl rounded-full scale-[1.75]"
+                    ></div>
+                    <img
+                        src="/favicon.png"
+                        alt="Arcane Ledger Logo"
+                        class="relative w-20 h-20 rounded-lg mx-auto drop-shadow-xl transform transition-transform hover:scale-105 duration-300"
+                    />
+                </div>
                 <h2 class="text-2xl mb-2 font-bold">
                     {{ isSignUp ? "Create an Account" : "Welcome Back" }}
                 </h2>

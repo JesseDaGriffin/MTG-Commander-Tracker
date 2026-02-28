@@ -1,9 +1,13 @@
+```html
 <template>
     <div class="animate-fade-in">
-        <div class="mb-8">
-            <h2 class="text-3xl font-bold mb-1">Players</h2>
-            <p class="text-muted">Manage your playgroup and their details</p>
-        </div>
+        <!-- Header Banner -->
+        <PageHeader
+            title="Players"
+            label="Roster"
+            description="Manage your playgroup and their details."
+            icon="mdi:account-group"
+        />
 
         <!-- Add Player Form -->
         <div v-if="showAddForm" class="card p-6 mb-6">
