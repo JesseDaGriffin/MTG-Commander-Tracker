@@ -28,6 +28,13 @@
                                 v-for="player in players"
                                 :key="player.id"
                                 :value="player.id"
+                                :disabled="
+                                    newGame.participants.some(
+                                        (p, i) =>
+                                            i !== index &&
+                                            p.playerId === player.id,
+                                    )
+                                "
                             >
                                 {{ player.name }}
                             </option>
