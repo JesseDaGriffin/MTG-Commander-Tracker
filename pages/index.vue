@@ -91,7 +91,7 @@
                     <NuxtLink
                         to="/games"
                         class="btn btn-secondary mt-4 w-full flex justify-center"
-                        >View All Games</NuxtLink
+                        >View All Games and Details</NuxtLink
                     >
                 </div>
 

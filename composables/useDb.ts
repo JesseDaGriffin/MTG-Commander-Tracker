@@ -83,7 +83,13 @@ export const useDb = () => {
                 .select(
                     `
           *,
-          players!games_winner_id_fkey ( name )
+          players!games_winner_id_fkey ( name ),
+          game_participants (
+            id,
+            player_id,
+            players ( name ),
+            decks ( commander_name, commander_image_url )
+          )
         `,
                 )
                 .order("played_on", { ascending: false });
