@@ -3,73 +3,75 @@
 @tailwind utilities;
 
 :root {
-  /* Colors */
-  --bg-primary: #090e17;
-  /* Very Dark Blue */
-  --bg-secondary: #111b2d;
-  /* Dark Blue */
-  --bg-tertiary: #1a2a47;
-  /* Lighter Dark Blue */
+    /* Colors */
+    --bg-primary: #090e17;
+    /* Very Dark Blue */
+    --bg-secondary: #111b2d;
+    /* Dark Blue */
+    --bg-tertiary: #1a2a47;
+    /* Lighter Dark Blue */
 
-  --text-primary: #f0f8ff;
-  /* Alice Blue */
-  --text-secondary: #94a3b8;
-  /* Slate 400 */
-  --text-muted: #64748b;
-  /* Slate 500 */
+    --text-primary: #f0f8ff;
+    /* Alice Blue */
+    --text-secondary: #94a3b8;
+    /* Slate 400 */
+    --text-muted: #64748b;
+    /* Slate 500 */
 
-  --accent-primary: #0ea5e9;
-  /* Sky 500 / Arcane Cyan */
-  --accent-hover: #0284c7;
-  /* Sky 600 */
+    --accent-primary: #0ea5e9;
+    /* Sky 500 / Arcane Cyan */
+    --accent-hover: #0284c7;
+    /* Sky 600 */
 
-  --mtg-white: #f0e6d2;
-  --mtg-blue: #0ea5e9;
-  --mtg-black: #cac5c0;
-  --mtg-red: #fabea6;
-  --mtg-green: #c4d3ca;
+    --mtg-white: #f0e6d2;
+    --mtg-blue: #0ea5e9;
+    --mtg-black: #cac5c0;
+    --mtg-red: #fabea6;
+    --mtg-green: #c4d3ca;
 
-  --border-color: #1e2e4f;
+    --border-color: #1e2e4f;
 
-  /* Radii */
-  --radius-sm: 0.375rem;
-  --radius-md: 0.5rem;
-  --radius-lg: 0.75rem;
-  --radius-xl: 1rem;
+    /* Radii */
+    --radius-sm: 0.375rem;
+    --radius-md: 0.5rem;
+    --radius-lg: 0.75rem;
+    --radius-xl: 1rem;
 
-  /* Shadows */
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-  --shadow-glow: 0 0 15px -3px rgba(14, 165, 233, 0.4);
-  /* Cyan/Blue Glow */
+    /* Shadows */
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md:
+        0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-lg:
+        0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --shadow-glow: 0 0 15px -3px rgba(14, 165, 233, 0.4);
+    /* Cyan/Blue Glow */
 
-  /* Typography */
-  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+    /* Typography */
+    --font-sans: "Inter", system-ui, -apple-system, sans-serif;
 
-  /* Spacing */
-  --header-height: 4rem;
-  --nav-height: 4rem;
-  /* For bottom mobile nav */
+    /* Spacing */
+    --header-height: 4rem;
+    --nav-height: 4rem;
+    /* For bottom mobile nav */
 }
 
 *,
 *::before,
 *::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
 body {
-  font-family: var(--font-sans);
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
-  line-height: 1.5;
-  -webkit-font-smoothing: antialiased;
-  min-height: 100vh;
-  /* Mobile-first padding bottom to allow for bottom nav */
-  padding-bottom: var(--nav-height);
+    font-family: var(--font-sans);
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+    /* Mobile-first padding bottom to allow for bottom nav */
+    padding-bottom: var(--nav-height);
 }
 
 /* Typography styles */
@@ -79,158 +81,160 @@ h3,
 h4,
 h5,
 h6 {
-  font-weight: 700;
-  line-height: 1.2;
-  color: var(--text-primary);
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--text-primary);
 }
 
 a {
-  color: var(--accent-primary);
-  text-decoration: none;
-  transition: color 0.2s ease;
+    color: var(--accent-primary);
+    text-decoration: none;
+    transition: color 0.2s ease;
 }
 
 a:hover {
-  color: var(--accent-hover);
+    color: var(--accent-hover);
 }
 
 @layer components {
+    /* Utilities */
+    .container {
+        width: 100%;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1rem;
+    }
 
-  /* Utilities */
-  .container {
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 1rem;
-  }
+    .card {
+        background-color: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-lg);
+        padding: 1.5rem;
+        box-shadow: var(--shadow-md);
+        transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease;
+    }
 
-  .card {
-    background-color: var(--bg-secondary);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-lg);
-    padding: 1.5rem;
-    box-shadow: var(--shadow-md);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-  }
+    .card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg), var(--shadow-glow);
+    }
 
-  .card:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-lg), var(--shadow-glow);
-  }
+    .glass {
+        background: rgba(30, 41, 59, 0.7);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
 
-  .glass {
-    background: rgba(30, 41, 59, 0.7);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-  }
+    /* Buttons */
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.5rem 1rem;
+        font-weight: 500;
+        border-radius: var(--radius-md);
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-size: 0.875rem;
+    }
 
-  /* Buttons */
-  .btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.5rem 1rem;
-    font-weight: 500;
-    border-radius: var(--radius-md);
-    border: none;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    font-size: 0.875rem;
-  }
+    .btn-primary {
+        background-color: var(--accent-primary);
+        color: white;
+    }
 
-  .btn-primary {
-    background-color: var(--accent-primary);
-    color: white;
-  }
+    .btn-primary:hover {
+        background-color: var(--accent-hover);
+        box-shadow: var(--shadow-glow);
+    }
 
-  .btn-primary:hover {
-    background-color: var(--accent-hover);
-    box-shadow: var(--shadow-glow);
-  }
+    .btn-secondary {
+        background-color: var(--bg-tertiary);
+        color: var(--text-primary);
+        border: 1px solid var(--border-color);
+    }
 
-  .btn-secondary {
-    background-color: var(--bg-tertiary);
-    color: var(--text-primary);
-    border: 1px solid var(--border-color);
-  }
+    .btn-secondary:hover {
+        background-color: var(--bg-secondary);
+        border-color: var(--text-muted);
+    }
 
-  .btn-secondary:hover {
-    background-color: var(--bg-secondary);
-    border-color: var(--text-muted);
-  }
+    /* Forms */
+    .form-group {
+        margin-bottom: 1rem;
+    }
 
-  /* Forms */
-  .form-group {
-    margin-bottom: 1rem;
-  }
+    .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: var(--text-secondary);
+    }
 
-  .form-label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: var(--text-secondary);
-  }
+    .form-input {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        background-color: var(--bg-tertiary);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-md);
+        color: var(--text-primary);
+        font-family: inherit;
+        transition:
+            border-color 0.2s ease,
+            box-shadow 0.2s ease;
+    }
 
-  .form-input {
-    width: 100%;
-    padding: 0.75rem 1rem;
-    background-color: var(--bg-tertiary);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-md);
-    color: var(--text-primary);
-    font-family: inherit;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
-  }
+    .form-input:focus {
+        outline: none;
+        border-color: var(--accent-primary);
+        box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+    }
 
-  .form-input:focus {
-    outline: none;
-    border-color: var(--accent-primary);
-    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
-  }
-
-  select.form-input {
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%2394a3b8'%3E%3Cpath fill-rule='evenodd' d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z' clip-rule='evenodd' /%3E%3C/svg%3E");
-    background-position: right 1rem center;
-    background-repeat: no-repeat;
-    background-size: 1.5em 1.5em;
-    padding-right: 2.5rem;
-  }
+    select.form-input {
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%2394a3b8'%3E%3Cpath fill-rule='evenodd' d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z' clip-rule='evenodd' /%3E%3C/svg%3E");
+        background-position: right 1rem center;
+        background-repeat: no-repeat;
+        background-size: 1.5em 1.5em;
+        padding-right: 2.5rem;
+    }
 }
 
 @layer utilities {
-
-  /* Mobile-first specific hiding/showing */
-  .desktop-only {
-    display: none;
-  }
-
-  @media (min-width: 768px) {
+    /* Mobile-first specific hiding/showing */
     .desktop-only {
-      display: block;
+        display: none;
     }
 
-    .mobile-only {
-      display: none;
-    }
-  }
+    @media (min-width: 768px) {
+        .desktop-only {
+            display: block;
+        }
 
-  /* Animations */
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(10px);
+        .mobile-only {
+            display: none;
+        }
     }
 
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
+    /* Animations */
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
 
-  .animate-fade-in {
-    animation: fadeIn 0.4s ease forwards;
-  }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .animate-fade-in {
+        animation: fadeIn 0.4s ease forwards;
+    }
 }

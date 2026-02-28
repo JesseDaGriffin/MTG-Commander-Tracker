@@ -1,6 +1,6 @@
 # Supabase Setup and Schema Instructions
 
-To host the backend and database for Arcane Ledger, log into [Supabase](https://supabase.com) and create a new project. 
+To host the backend and database for Arcane Ledger, log into [Supabase](https://supabase.com) and create a new project.
 Once your project is created, navigate to the **SQL Editor** in the Supabase Dashboard and run the following queries to create the necessary tables.
 
 ### 1. Create Tables
@@ -42,10 +42,12 @@ CREATE TABLE game_participants (
 ```
 
 ### 2. Configure Row Level Security (RLS) Policies
+
 For a simple personal game tracker without user authentication initially built-in, you may want to disable RLS or allow anonymous read/write.
 **WARNING: For a public-facing app, you MUST implement proper auth.**
 
 To quickly test the app allowing anyone with the anon key to read/write:
+
 ```sql
 ALTER TABLE players DISABLE ROW LEVEL SECURITY;
 ALTER TABLE decks DISABLE ROW LEVEL SECURITY;
@@ -54,6 +56,7 @@ ALTER TABLE game_participants DISABLE ROW LEVEL SECURITY;
 ```
 
 ### 3. Adding Soft Delete Support
+
 To allow users to hide "deleted" decks from their roster without actually breaking their previous game history records (since `game_participants` relies on the deck ID), you must run the following migration:
 
 ```sql
@@ -62,9 +65,12 @@ ALTER TABLE decks ADD COLUMN deleted_at TIMESTAMP WITH TIME ZONE;
 ```
 
 ### 4. Connect Nuxt to Supabase
+
 In your Nuxt `.env` file, you will need to add:
+
 ```
 SUPABASE_URL=your_project_url
 SUPABASE_KEY=your_anon_public_key
 ```
+
 You can find these in Project Settings -> API in your Supabase dashboard.

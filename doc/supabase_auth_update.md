@@ -15,8 +15,8 @@ ALTER TABLE decks ADD COLUMN user_id UUID REFERENCES auth.users(id) DEFAULT auth
 ALTER TABLE games ADD COLUMN user_id UUID REFERENCES auth.users(id) DEFAULT auth.uid();
 ALTER TABLE game_participants ADD COLUMN user_id UUID REFERENCES auth.users(id) DEFAULT auth.uid();
 
--- If you have existing data and want to assign it to your first user, 
--- you will need to manually UPDATE those rows with your auth.users ID, 
+-- If you have existing data and want to assign it to your first user,
+-- you will need to manually UPDATE those rows with your auth.users ID,
 -- or delete the data to start fresh:
 -- TRUNCATE TABLE games, decks, players CASCADE;
 
@@ -44,22 +44,23 @@ Create policies that ensure authenticated users can only view, insert, update, o
 
 ```sql
 -- Players Policies
-CREATE POLICY "Users can only access their own players" 
+CREATE POLICY "Users can only access their own players"
 ON players FOR ALL USING (auth.uid() = user_id);
 
 -- Decks Policies
-CREATE POLICY "Users can only access their own decks" 
+CREATE POLICY "Users can only access their own decks"
 ON decks FOR ALL USING (auth.uid() = user_id);
 
 -- Games Policies
-CREATE POLICY "Users can only access their own games" 
+CREATE POLICY "Users can only access their own games"
 ON games FOR ALL USING (auth.uid() = user_id);
 
 -- Game Participants Policies
-CREATE POLICY "Users can only access their own game participants" 
+CREATE POLICY "Users can only access their own game participants"
 ON game_participants FOR ALL USING (auth.uid() = user_id);
 ```
 
 ### 4. What This Changes in the App
+
 - Supabase will automatically set the `user_id` to the logged-in user when records are created (thanks to the `DEFAULT auth.uid()` constraint).
 - When fetching data, Supabase will silently filter the records so that a user only receives data matching their specific `user_id`.
