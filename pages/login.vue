@@ -12,11 +12,10 @@
       <form @submit.prevent="handleAuth">
         <div class="form-group mb-6">
           <label class="form-label" for="email">Email</label>
-          <input 
+          <BaseInput 
             id="email" 
             v-model="email" 
             type="email" 
-            class="form-input" 
             placeholder="your@email.com" 
             required 
             :disabled="isLoading"
@@ -25,11 +24,10 @@
 
         <div class="form-group mb-8">
           <label class="form-label" for="password">Password</label>
-          <input 
+          <BaseInput 
             id="password" 
             v-model="password" 
             type="password" 
-            class="form-input" 
             placeholder="••••••••" 
             required 
             :disabled="isLoading"

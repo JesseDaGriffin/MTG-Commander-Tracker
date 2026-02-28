@@ -2,12 +2,12 @@
   <div class="relative w-full commander-search">
     <div class="relative flex items-center">
       <Icon name="mdi:magnify" class="absolute left-4 top-1/2 -translate-y-1/2 text-muted text-xl pointer-events-none" />
-      <input 
+      <BaseInput 
         type="text" 
         v-model="searchQuery" 
         @input="debouncedSearch"
         placeholder="Search for a Commander..." 
-        class="form-input pl-11 pr-11 h-12 text-base w-full"
+        class="pl-11 pr-11 h-12 text-base w-full"
       />
       <div v-if="isLoading" class="absolute right-4 top-1/2 -translate-y-1/2 text-accent-primary pointer-events-none">
         <Icon name="mdi:loading" class="animate-spin text-xl" />

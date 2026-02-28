@@ -11,11 +11,10 @@
       <form @submit.prevent="submitPlayer">
         <div class="form-group mb-4">
           <label class="form-label block text-sm font-medium text-secondary mb-2" for="playerName">Player Name</label>
-          <input 
+          <BaseInput 
             id="playerName"
             v-model="newPlayerName" 
             type="text" 
-            class="form-input" 
             placeholder="Enter player name" 
             required
             :disabled="isSubmitting"

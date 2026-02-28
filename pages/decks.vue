@@ -10,12 +10,12 @@
       
       <div class="mb-5">
         <label class="block text-sm font-medium text-secondary mb-2" for="playerSelect">Select Player</label>
-        <select id="playerSelect" v-model="selectedPlayerId" class="form-input" :disabled="isLoading">
+        <BaseSelect id="playerSelect" v-model="selectedPlayerId" :disabled="isLoading">
           <option value="">-- Choose a Player --</option>
           <option v-for="player in players" :key="player.id" :value="player.id">
             {{ player.name }}
           </option>
-        </select>
+        </BaseSelect>
       </div>
 
       <div class="mb-2">
@@ -51,11 +51,11 @@
           <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
             <Icon name="mdi:magnify" class="text-muted" />
           </div>
-          <input 
+          <BaseInput 
             v-model="playerSearchQuery" 
             type="text" 
             placeholder="Search players..." 
-            class="form-input pl-10"
+            class="pl-10"
           />
         </div>
       </div>

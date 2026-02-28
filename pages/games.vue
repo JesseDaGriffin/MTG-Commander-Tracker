@@ -12,19 +12,19 @@
         <div class="mb-6">
           <label class="block text-sm font-medium text-secondary mb-2">Players & Decks</label>
           <div v-for="(participant, index) in newGame.participants" :key="index" class="flex gap-2 items-center mb-2">
-            <select v-model="participant.playerId" class="form-input flex-1" @change="onPlayerChange(index)">
+            <BaseSelect v-model="participant.playerId" class="flex-1" @change="onPlayerChange(index)">
               <option value="">-- Player --</option>
               <option v-for="player in players" :key="player.id" :value="player.id">
                 {{ player.name }}
               </option>
-            </select>
+            </BaseSelect>
             
-            <select v-model="participant.deckId" class="form-input flex-1" :disabled="!participant.playerId">
+            <BaseSelect v-model="participant.deckId" class="flex-1" :disabled="!participant.playerId">
               <option value="">-- Deck --</option>
               <option v-for="deck in getDecksForPlayer(participant.playerId)" :key="deck.id" :value="deck.id">
                 {{ deck.commander_name }}
               </option>
-            </select>
+            </BaseSelect>
             
             <button v-if="newGame.participants.length > 2" type="button" class="text-red-500 hover:bg-bg-tertiary p-2 rounded-md transition-colors" @click="removeParticipant(index)">
               <Icon name="mdi:close" />
@@ -38,13 +38,13 @@
 
         <div class="mb-6">
           <label class="block text-sm font-medium text-secondary mb-2" for="winnerSelect">Winner</label>
-          <select id="winnerSelect" v-model="newGame.winnerId" class="form-input" required>
+          <BaseSelect id="winnerSelect" v-model="newGame.winnerId" required>
             <option value="">-- Select Winner --</option>
             <option v-for="participant in validParticipants" :key="participant.playerId" :value="participant.playerId">
               {{ getPlayerName(participant.playerId) }}
             </option>
             <option value="draw">-- Draw / No Winner --</option>
-          </select>
+          </BaseSelect>
         </div>
         
         <div class="mb-8">
