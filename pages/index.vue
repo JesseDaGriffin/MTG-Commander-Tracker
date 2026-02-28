@@ -50,56 +50,88 @@
             <div
                 class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-8"
             >
-                <div
-                    class="card flex items-center gap-5 p-6 border-l-4 border-l-accent-primary"
+                <NuxtLink
+                    to="/players"
+                    class="card flex items-center gap-5 p-6 border-l-4 border-l-accent-primary hover:bg-tertiary transition-colors cursor-pointer group"
                 >
                     <Icon
                         name="mdi:account-group"
-                        class="text-4xl text-accent-primary bg-indigo-500/10 p-2 rounded-md"
+                        class="text-4xl text-accent-primary bg-indigo-500/10 p-2 rounded-md group-hover:bg-accent-primary/20 transition-colors"
                     />
                     <div>
                         <h3 class="text-sm text-secondary font-medium mb-1">
                             Total Players
                         </h3>
-                        <p class="text-2xl font-bold text-primary">
+                        <p
+                            class="text-2xl font-bold text-primary group-hover:text-accent-primary transition-colors"
+                        >
                             {{ metrics.totalPlayers }}
                         </p>
                     </div>
-                </div>
-                <div
-                    class="card flex items-center gap-5 p-6 border-l-4 border-l-accent-primary"
+                </NuxtLink>
+                <NuxtLink
+                    to="/decks"
+                    class="card flex items-center gap-5 p-6 border-l-4 border-l-accent-primary hover:bg-tertiary transition-colors cursor-pointer group"
                 >
                     <Icon
                         name="mdi:cards"
-                        class="text-4xl text-accent-primary bg-indigo-500/10 p-2 rounded-md"
+                        class="text-4xl text-accent-primary bg-indigo-500/10 p-2 rounded-md group-hover:bg-accent-primary/20 transition-colors"
                     />
                     <div>
                         <h3 class="text-sm text-secondary font-medium mb-1">
                             Total Decks
                         </h3>
-                        <p class="text-2xl font-bold text-primary">
+                        <p
+                            class="text-2xl font-bold text-primary group-hover:text-accent-primary transition-colors"
+                        >
                             {{ metrics.totalDecks }}
                         </p>
                     </div>
-                </div>
-                <div
-                    class="card flex items-center gap-5 p-6 border-l-4 border-l-accent-primary"
+                </NuxtLink>
+                <NuxtLink
+                    to="/games"
+                    class="card flex items-center gap-5 p-6 border-l-4 border-l-accent-primary hover:bg-tertiary transition-colors cursor-pointer group"
                 >
                     <Icon
                         name="mdi:sword-cross"
-                        class="text-4xl text-accent-primary bg-indigo-500/10 p-2 rounded-md"
+                        class="text-4xl text-accent-primary bg-indigo-500/10 p-2 rounded-md group-hover:bg-accent-primary/20 transition-colors"
                     />
                     <div>
                         <h3 class="text-sm text-secondary font-medium mb-1">
                             Games Played
                         </h3>
-                        <p class="text-2xl font-bold text-primary">
+                        <p
+                            class="text-2xl font-bold text-primary group-hover:text-accent-primary transition-colors"
+                        >
                             {{ metrics.totalGames }}
                         </p>
                     </div>
-                </div>
+                </NuxtLink>
             </div>
 
+            <!-- Quick Record Action -->
+            <div class="mb-6 flex justify-end">
+                <button
+                    v-if="!showRecordForm"
+                    @click="showRecordForm = true"
+                    class="btn btn-primary"
+                >
+                    <Icon name="mdi:sword-cross" class="mr-2" />
+                    Quick Record Game
+                </button>
+            </div>
+
+            <div v-show="showRecordForm" class="mb-8 animate-fade-in">
+                <RecordGameForm
+                    @saved="onGameSaved"
+                    @cancel="showRecordForm = false"
+                />
+            </div>
+
+            <!-- Leaderboard -->
+            <LeaderboardWidget class="mb-8" ref="leaderboardRef" />
+
+            <!-- Recent Games -->
             <div class="card mt-6">
                 <h3 class="text-xl mb-4 border-b border-border-color pb-2">
                     Recent Games
@@ -152,6 +184,8 @@ import { ref, onMounted } from "vue";
 
 const db = useDb();
 const isLoading = ref(true);
+const showRecordForm = ref(false);
+const leaderboardRef = ref(null);
 
 const metrics = ref({
     totalPlayers: 0,
@@ -161,7 +195,7 @@ const metrics = ref({
 
 const recentGames = ref([]);
 
-onMounted(async () => {
+const loadData = async () => {
     isLoading.value = true;
     try {
         const [players, decks, games] = await Promise.all([
@@ -181,5 +215,17 @@ onMounted(async () => {
     } finally {
         isLoading.value = false;
     }
+};
+
+const onGameSaved = () => {
+    showRecordForm.value = false;
+    loadData();
+    if (leaderboardRef.value?.fetchData) {
+        leaderboardRef.value.fetchData();
+    }
+};
+
+onMounted(() => {
+    loadData();
 });
 </script>

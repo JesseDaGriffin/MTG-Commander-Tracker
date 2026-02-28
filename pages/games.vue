@@ -9,137 +9,11 @@
         />
 
         <!-- Record Game Form -->
-        <div v-if="showAddForm" class="card p-6 mb-6">
-            <h3 class="text-xl font-bold mb-4">Record Game Result</h3>
-            <form @submit.prevent="submitGame">
-                <div class="mb-6">
-                    <label class="block text-sm font-medium text-secondary mb-2"
-                        >Players & Decks</label
-                    >
-                    <div
-                        v-for="(participant, index) in newGame.participants"
-                        :key="index"
-                        class="flex gap-2 items-center mb-2"
-                        :style="{ zIndex: 50 - index, position: 'relative' }"
-                    >
-                        <BaseSelect
-                            v-model="participant.playerId"
-                            class="flex-1"
-                            @change="onPlayerChange(index)"
-                            placeholder="-- Player --"
-                            :options="
-                                players.map((player) => ({
-                                    label: player.name,
-                                    value: player.id,
-                                    disabled: newGame.participants.some(
-                                        (p, i) =>
-                                            i !== index &&
-                                            p.playerId === player.id,
-                                    ),
-                                }))
-                            "
-                        />
-
-                        <BaseSelect
-                            v-model="participant.deckId"
-                            class="flex-1"
-                            :disabled="!participant.playerId"
-                            placeholder="-- Deck --"
-                            :options="
-                                getDecksForPlayer(participant.playerId).map(
-                                    (deck) => ({
-                                        label: deck.commander_name,
-                                        value: deck.id,
-                                    }),
-                                )
-                            "
-                        />
-
-                        <button
-                            v-if="newGame.participants.length > 2"
-                            type="button"
-                            class="text-red-500 hover:bg-tertiary p-2 rounded-md transition-colors"
-                            @click="removeParticipant(index)"
-                        >
-                            <Icon name="mdi:close" />
-                        </button>
-                    </div>
-
-                    <button
-                        v-if="newGame.participants.length < 6"
-                        type="button"
-                        class="btn btn-secondary text-sm mt-2"
-                        @click="addParticipant"
-                    >
-                        <Icon name="mdi:plus" class="mr-1" /> Add Player
-                    </button>
-                </div>
-
-                <div class="mb-6">
-                    <label
-                        class="block text-sm font-medium text-secondary mb-2"
-                        for="winnerSelect"
-                        >Winner</label
-                    >
-                    <BaseSelect
-                        id="winnerSelect"
-                        v-model="newGame.winnerId"
-                        required
-                        placeholder="-- Select Winner --"
-                        :options="
-                            validParticipants
-                                .map((p) => ({
-                                    label: getPlayerName(p.playerId),
-                                    value: p.playerId,
-                                }))
-                                .concat([
-                                    {
-                                        label: '-- Draw / No Winner --',
-                                        value: 'draw',
-                                    },
-                                ])
-                        "
-                    />
-                </div>
-
-                <div class="mb-8">
-                    <label
-                        class="block text-sm font-medium text-secondary mb-2"
-                        for="gameNotes"
-                        >Notes (Optional)</label
-                    >
-                    <textarea
-                        id="gameNotes"
-                        v-model="newGame.notes"
-                        class="form-input"
-                        rows="2"
-                        placeholder="Any memorable moments?"
-                    ></textarea>
-                </div>
-
-                <div class="flex gap-3 justify-end items-center">
-                    <button
-                        type="button"
-                        class="btn btn-secondary"
-                        @click="showAddForm = false"
-                        :disabled="isSubmitting"
-                    >
-                        Cancel
-                    </button>
-                    <button
-                        type="submit"
-                        class="btn btn-primary"
-                        :disabled="isSubmitting || validParticipants.length < 2"
-                    >
-                        <Icon
-                            v-if="isSubmitting"
-                            name="mdi:loading"
-                            class="animate-spin mr-2"
-                        />
-                        Save Game
-                    </button>
-                </div>
-            </form>
+        <div v-show="showAddForm" class="mb-6 animate-fade-in">
+            <RecordGameForm
+                @saved="onGameSaved"
+                @cancel="showAddForm = false"
+            />
         </div>
 
         <!-- Game History -->
@@ -189,140 +63,28 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, onMounted } from "vue";
 
 const db = useDb();
-const supabase = useSupabaseClient();
 
 const games = ref([]);
-const players = ref([]);
-const decks = ref([]);
 const isLoading = ref(true);
 const showAddForm = ref(false);
-const isSubmitting = ref(false);
-
-const newGame = ref({
-    participants: [
-        { playerId: "", deckId: "" },
-        { playerId: "", deckId: "" },
-        { playerId: "", deckId: "" },
-        { playerId: "", deckId: "" },
-    ],
-    winnerId: "",
-    notes: "",
-});
-
-const validParticipants = computed(() => {
-    return newGame.value.participants.filter((p) => p.playerId);
-});
-
-const getDecksForPlayer = (playerId) => {
-    if (!playerId) return [];
-    return decks.value.filter((d) => d.player_id === playerId);
-};
-
-const getPlayerName = (playerId) => {
-    const player = players.value.find((p) => p.id === playerId);
-    return player ? player.name : "Unknown";
-};
-
-const addParticipant = () => {
-    if (newGame.value.participants.length < 6) {
-        newGame.value.participants.push({ playerId: "", deckId: "" });
-    }
-};
-
-const removeParticipant = (index) => {
-    newGame.value.participants.splice(index, 1);
-    // Check if removed player was the winner
-    if (
-        newGame.value.winnerId &&
-        !validParticipants.value.find(
-            (p) => p.playerId === newGame.value.winnerId,
-        )
-    ) {
-        newGame.value.winnerId = "";
-    }
-};
-
-const onPlayerChange = (index) => {
-    // Reset deck when player changes
-    newGame.value.participants[index].deckId = "";
-};
 
 const loadData = async () => {
     isLoading.value = true;
     try {
-        const [pData, dData, gData] = await Promise.all([
-            db.getPlayers(),
-            db.getDecks(),
-            db.getGames(),
-        ]);
-        players.value = pData;
-        decks.value = dData;
-        games.value = gData;
+        games.value = await db.getGames();
     } catch (error) {
-        console.error("Failed to load data:", error);
+        console.error("Failed to load games data:", error);
     } finally {
         isLoading.value = false;
     }
 };
 
-const submitGame = async () => {
-    if (validParticipants.value.length < 2) {
-        alert("A game needs at least 2 players.");
-        return;
-    }
-
-    isSubmitting.value = true;
-    try {
-        // 1. Insert Game
-        const winnerId =
-            newGame.value.winnerId === "draw" ? null : newGame.value.winnerId;
-        const { data: gameData, error: gameError } = await supabase
-            .from("games")
-            .insert([
-                {
-                    winner_id: winnerId,
-                    notes: newGame.value.notes,
-                },
-            ])
-            .select();
-
-        if (gameError) throw gameError;
-        const gameId = gameData[0].id;
-
-        // 2. Insert Participants
-        const participantInserts = validParticipants.value.map((p) => ({
-            game_id: gameId,
-            player_id: p.playerId,
-            deck_id: p.deckId || null,
-        }));
-
-        const { error: partError } = await supabase
-            .from("game_participants")
-            .insert(participantInserts);
-        if (partError) throw partError;
-
-        // Success
-        newGame.value = {
-            participants: [
-                { playerId: "", deckId: "" },
-                { playerId: "", deckId: "" },
-                { playerId: "", deckId: "" },
-                { playerId: "", deckId: "" },
-            ],
-            winnerId: "",
-            notes: "",
-        };
-        showAddForm.value = false;
-        await loadData();
-    } catch (error) {
-        console.error("Failed to save game:", error);
-        alert("Failed to save game.");
-    } finally {
-        isSubmitting.value = false;
-    }
+const onGameSaved = () => {
+    showAddForm.value = false;
+    loadData();
 };
 
 onMounted(() => {
