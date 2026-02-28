@@ -45,8 +45,19 @@
     </div>
 
     <div class="card p-6">
-      <div class="flex items-center justify-between border-b border-border-color pb-4 mb-6">
+      <div class="flex items-center justify-between border-b border-border-color pb-4 mb-6 gap-4">
         <h3 class="text-xl font-bold">Deck Roster</h3>
+        <div class="relative w-full max-w-xs">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <Icon name="mdi:magnify" class="text-muted" />
+          </div>
+          <input 
+            v-model="playerSearchQuery" 
+            type="text" 
+            placeholder="Search players..." 
+            class="form-input pl-10"
+          />
+        </div>
       </div>
       
       <div v-if="isLoading" class="flex justify-center p-6 text-muted">
@@ -72,7 +83,8 @@
 
       <div v-else class="flex flex-col items-center justify-center p-12 text-center text-muted">
         <Icon name="mdi:cards-outline" class="text-5xl mb-4 opacity-50" />
-        <p>No decks added yet.</p>
+        <p v-if="playerSearchQuery">No players found matching "{{ playerSearchQuery }}".</p>
+        <p v-else>No decks added yet.</p>
       </div>
     </div>
     
@@ -98,6 +110,7 @@ const isDeleting = ref(null)
 const decks = ref([])
 const isLoading = ref(true)
 const commanderSearchRef = ref(null)
+const playerSearchQuery = ref('')
 
 const previewState = ref({
   isOpen: false,
@@ -121,8 +134,15 @@ const onSelectedCommanderPreviewClick = (e) => {
 
 const groupedDecks = computed(() => {
   const groups = {}
+  const query = playerSearchQuery.value.toLowerCase().trim()
+  
   decks.value.forEach(deck => {
     const playerName = deck.players?.name || 'Unknown Player'
+    
+    if (query && !playerName.toLowerCase().includes(query)) {
+      return
+    }
+    
     if (!groups[playerName]) {
       groups[playerName] = []
     }
