@@ -312,6 +312,7 @@ const submitGame = async () => {
             winnerId: "",
             notes: "",
         };
+        showAddForm.value = false;
         await loadData();
     } catch (error) {
         console.error("Failed to save game:", error);
