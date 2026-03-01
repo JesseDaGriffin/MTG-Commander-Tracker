@@ -54,14 +54,16 @@
                     </button>
                 </div>
 
-                <button
+                <BaseButton
                     v-if="newGame.participants.length < 6"
                     type="button"
-                    class="btn btn-secondary text-sm mt-2"
+                    variant="ghost"
+                    customClass="text-sm mt-2 bg-secondary border-none hover:bg-primary px-4 py-2"
                     @click="addParticipant"
+                    icon="mdi:plus"
                 >
-                    <Icon name="mdi:plus" class="mr-1" /> Add Player
-                </button>
+                    Add Player
+                </BaseButton>
             </div>
 
             <div class="mb-6">
@@ -104,33 +106,29 @@
                 <textarea
                     id="gameNotes"
                     v-model="newGame.notes"
-                    class="form-input"
+                    class="form-input resize-none"
                     rows="2"
                     placeholder="Any memorable moments?"
                 ></textarea>
             </div>
 
             <div class="flex gap-3 justify-end items-center">
-                <button
+                <BaseButton
                     type="button"
-                    class="btn btn-secondary"
+                    variant="secondary"
                     @click="$emit('cancel')"
                     :disabled="isSubmitting"
                 >
                     Cancel
-                </button>
-                <button
+                </BaseButton>
+                <BaseButton
                     type="submit"
-                    class="btn btn-primary"
+                    variant="primary"
                     :disabled="isSubmitting || !isFormValid"
+                    :loading="isSubmitting"
                 >
-                    <Icon
-                        v-if="isSubmitting"
-                        name="mdi:loading"
-                        class="animate-spin mr-2"
-                    />
                     Save Game
-                </button>
+                </BaseButton>
             </div>
         </form>
     </div>

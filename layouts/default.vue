@@ -52,12 +52,14 @@
                         active-class="text-accent-primary router-link-active"
                         >Games</NuxtLink
                     >
-                    <button
-                        class="btn btn-secondary text-sm ml-4"
+                    <BaseButton
+                        variant="secondary"
+                        customClass="text-sm ml-4"
+                        icon="mdi:logout"
                         @click="signOut"
                     >
-                        <Icon name="mdi:logout" class="mr-1" /> Sign Out
-                    </button>
+                        Sign Out
+                    </BaseButton>
                 </nav>
             </div>
         </header>

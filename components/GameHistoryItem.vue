@@ -32,13 +32,14 @@
                             class="text-secondary font-bold flex items-center gap-2"
                         >
                             TBD
-                            <button
+                            <BaseButton
                                 v-if="!isEditingWinner"
                                 @click.stop="isEditingWinner = true"
-                                class="btn btn-secondary text-xs px-2 py-1 h-auto min-h-0 ml-2"
+                                variant="secondary"
+                                customClass="text-xs px-2 py-1 h-auto min-h-0 ml-2 bg-secondary hover:bg-primary border border-border-color shadow-sm"
                             >
                                 Set Winner
-                            </button>
+                            </BaseButton>
                         </span>
                     </div>
                     <div
@@ -72,10 +73,10 @@
             <!-- Edit Winner Form -->
             <div
                 v-if="isEditingWinner"
-                class="w-full bg-bg-secondary p-3 mt-2 rounded-md border border-white/5 animate-fade-in"
+                class="w-full bg-white/5 p-4 mt-4 rounded-xl border border-white/10 shadow-lg relative animate-fade-in backdrop-blur-sm"
                 @click.stop
             >
-                <div class="mb-3">
+                <div class="mb-4">
                     <label class="block text-sm font-medium text-secondary mb-2"
                         >Select Winner</label
                     >
@@ -99,32 +100,29 @@
                     >
                     <textarea
                         v-model="editNotes"
-                        class="form-input"
+                        class="form-input resize-none"
                         rows="2"
                         placeholder="Any memorable moments?"
                     ></textarea>
                 </div>
 
                 <div class="flex gap-2 justify-end">
-                    <button
-                        class="btn border border-white/10 text-sm"
+                    <BaseButton
+                        variant="ghost"
                         @click="isEditingWinner = false"
                         :disabled="isSaving"
                     >
                         Cancel
-                    </button>
-                    <button
-                        class="btn btn-primary px-4 bg-emerald-600 hover:bg-emerald-500"
+                    </BaseButton>
+                    <BaseButton
+                        variant="primary"
+                        customClass="px-4"
                         @click="saveWinner"
                         :disabled="!selectedWinnerId || isSaving"
+                        :loading="isSaving"
                     >
-                        <Icon
-                            v-if="isSaving"
-                            name="mdi:loading"
-                            class="animate-spin mr-2"
-                        />
                         Save
-                    </button>
+                    </BaseButton>
                 </div>
             </div>
         </div>

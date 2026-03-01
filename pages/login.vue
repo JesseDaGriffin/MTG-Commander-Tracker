@@ -63,18 +63,15 @@
                     {{ successMsg }}
                 </div>
 
-                <button
+                <BaseButton
                     type="submit"
-                    class="btn btn-primary w-full flex justify-center mb-4"
+                    variant="primary"
+                    customClass="w-full flex justify-center mb-4"
                     :disabled="isLoading"
+                    :loading="isLoading"
                 >
-                    <Icon
-                        v-if="isLoading"
-                        name="mdi:loading"
-                        class="animate-spin mr-2"
-                    />
                     {{ isSignUp ? "Sign Up" : "Sign In" }}
-                </button>
+                </BaseButton>
             </form>
 
             <div v-if="allowSignUp" class="text-center mt-4">

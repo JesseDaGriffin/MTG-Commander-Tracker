@@ -49,10 +49,9 @@
         <div v-else>
             <!-- Quick Record Action -->
             <div class="mb-6 flex justify-end">
-                <NuxtLink to="/games?action=record" class="btn btn-primary">
-                    <Icon name="mdi:sword-cross" class="mr-2" />
+                <BaseButton to="/games?action=record" icon="mdi:sword-cross">
                     Record New Game
-                </NuxtLink>
+                </BaseButton>
             </div>
 
             <!-- Leaderboard -->
@@ -95,11 +94,13 @@
                             >
                         </div>
                     </div>
-                    <NuxtLink
+                    <BaseButton
                         to="/games"
-                        class="btn btn-secondary mt-4 w-full flex justify-center"
-                        >View All Games and Details</NuxtLink
+                        variant="secondary"
+                        customClass="mt-4 w-full flex justify-center"
                     >
+                        View All Games and Details
+                    </BaseButton>
                 </div>
 
                 <div
