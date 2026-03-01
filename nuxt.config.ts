@@ -31,7 +31,12 @@ export default defineNuxtConfig({
         },
     },
 
-    modules: ["@nuxtjs/supabase", "@nuxtjs/tailwindcss", "@nuxt/icon"],
+    modules: [
+        "@nuxtjs/supabase",
+        "@nuxtjs/tailwindcss",
+        "@nuxt/icon",
+        "@netlify/nuxt",
+    ],
 
     supabase: {
         redirectOptions: {

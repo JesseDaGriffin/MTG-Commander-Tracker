@@ -1,7 +1,0 @@
-[build]
-  command = "npm run build"
-  publish = ".output/public"
-
-[dev]
-  command = "npm run dev"
-  port = 3000
