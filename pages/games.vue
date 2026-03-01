@@ -22,14 +22,14 @@
                 class="flex items-center justify-between border-b border-border-color pb-4 mb-4"
             >
                 <h3 class="text-xl font-bold">Game History</h3>
-                <button
+                <BaseButton
                     v-if="!showAddForm"
-                    class="btn btn-primary"
+                    variant="primary"
                     @click="showAddForm = true"
+                    icon="mdi:sword-cross"
                 >
-                    <Icon name="mdi:sword-cross" class="mr-2" />
                     Record Game
-                </button>
+                </BaseButton>
             </div>
 
             <div v-if="isLoading" class="flex justify-center p-6 text-muted">
@@ -41,6 +41,7 @@
                     v-for="game in games"
                     :key="game.id"
                     :game="game"
+                    @updated="loadData"
                 />
             </div>
 
@@ -50,13 +51,14 @@
             >
                 <Icon name="mdi:history" class="text-5xl mb-4 opacity-50" />
                 <p>No games recorded yet.</p>
-                <button
+                <BaseButton
                     v-if="!showAddForm"
-                    class="btn btn-primary mt-6"
+                    variant="primary"
+                    customClass="mt-6"
                     @click="showAddForm = true"
                 >
                     Record Your First Game
-                </button>
+                </BaseButton>
             </div>
         </div>
     </div>

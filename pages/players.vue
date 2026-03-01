@@ -29,26 +29,22 @@
                     />
                 </div>
                 <div class="flex gap-3 justify-end mt-6">
-                    <button
+                    <BaseButton
                         type="button"
-                        class="btn btn-secondary"
+                        variant="secondary"
                         @click="showAddForm = false"
                         :disabled="isSubmitting"
                     >
                         Cancel
-                    </button>
-                    <button
+                    </BaseButton>
+                    <BaseButton
                         type="submit"
-                        class="btn btn-primary"
+                        variant="primary"
                         :disabled="isSubmitting"
+                        :loading="isSubmitting"
                     >
-                        <Icon
-                            v-if="isSubmitting"
-                            name="mdi:loading"
-                            class="animate-spin mr-2"
-                        />
                         Save Player
-                    </button>
+                    </BaseButton>
                 </div>
             </form>
         </div>
@@ -59,14 +55,14 @@
                 class="flex items-center justify-between border-b border-border-color pb-4 mb-4"
             >
                 <h3 class="text-xl font-bold">Player List</h3>
-                <button
+                <BaseButton
                     v-if="!showAddForm"
-                    class="btn btn-primary"
+                    variant="primary"
                     @click="showAddForm = true"
+                    icon="mdi:account-plus"
                 >
-                    <Icon name="mdi:account-plus" class="mr-2" />
                     Add Player
-                </button>
+                </BaseButton>
             </div>
 
             <div v-if="isLoading" class="flex justify-center p-6 text-muted">
@@ -93,12 +89,13 @@
                     class="text-5xl mb-4 opacity-50"
                 />
                 <p>No players added yet.</p>
-                <button
-                    class="btn btn-primary mt-6"
+                <BaseButton
+                    variant="primary"
+                    customClass="mt-6"
                     @click="showAddForm = true"
                 >
                     Add Your First Player
-                </button>
+                </BaseButton>
             </div>
         </div>
     </div>
