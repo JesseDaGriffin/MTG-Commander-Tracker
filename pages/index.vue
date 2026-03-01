@@ -47,8 +47,66 @@
         </div>
 
         <div v-else>
+            <!-- Quick Record Action -->
+            <div class="mb-6 flex justify-end">
+                <NuxtLink to="/games?action=record" class="btn btn-primary">
+                    <Icon name="mdi:sword-cross" class="mr-2" />
+                    Record New Game
+                </NuxtLink>
+            </div>
+
+            <!-- Leaderboard -->
+            <LeaderboardWidget class="mb-8" ref="leaderboardRef" />
+
+            <!-- Recent Games -->
+            <div class="card mt-6">
+                <h3 class="text-xl mb-4 border-b border-border-color pb-2">
+                    Recent Games
+                </h3>
+
+                <div
+                    v-if="recentGames.length > 0"
+                    class="flex flex-col gap-4 pb-2"
+                >
+                    <div
+                        v-for="game in recentGames"
+                        :key="game.id"
+                        class="bg-tertiary rounded-md p-5 border-l-4 border-l-accent-primary"
+                    >
+                        <div class="text-xs text-muted mb-2">
+                            {{ new Date(game.played_on).toLocaleDateString() }}
+                        </div>
+                        <div class="text-lg font-semibold flex items-center">
+                            <span class="text-muted mr-2">Winner:</span>
+                            <span class="text-mtg-red flex items-center gap-1">
+                                <Icon name="mdi:crown" class="text-amber-400" />
+                                {{ game.players?.name || "Draw" }}
+                            </span>
+                        </div>
+                    </div>
+                    <NuxtLink
+                        to="/games"
+                        class="btn btn-secondary mt-4 w-full flex justify-center"
+                        >View All Games and Details</NuxtLink
+                    >
+                </div>
+
+                <div
+                    v-else
+                    class="flex flex-col items-center justify-center p-12 text-center text-muted"
+                >
+                    <Icon name="mdi:inbox" class="text-5xl mb-4 opacity-50" />
+                    <p>No games recorded yet. Start playing!</p>
+                    <NuxtLink
+                        to="/games?action=record"
+                        class="btn btn-primary mt-6"
+                        >Record Game</NuxtLink
+                    >
+                </div>
+            </div>
+
             <div
-                class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-8"
+                class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-8"
             >
                 <NuxtLink
                     to="/players"
@@ -108,73 +166,6 @@
                     </div>
                 </NuxtLink>
             </div>
-
-            <!-- Quick Record Action -->
-            <div class="mb-6 flex justify-end">
-                <button
-                    v-if="!showRecordForm"
-                    @click="showRecordForm = true"
-                    class="btn btn-primary"
-                >
-                    <Icon name="mdi:sword-cross" class="mr-2" />
-                    Quick Record Game
-                </button>
-            </div>
-
-            <div v-show="showRecordForm" class="mb-8 animate-fade-in">
-                <RecordGameForm
-                    @saved="onGameSaved"
-                    @cancel="showRecordForm = false"
-                />
-            </div>
-
-            <!-- Leaderboard -->
-            <LeaderboardWidget class="mb-8" ref="leaderboardRef" />
-
-            <!-- Recent Games -->
-            <div class="card mt-6">
-                <h3 class="text-xl mb-4 border-b border-border-color pb-2">
-                    Recent Games
-                </h3>
-
-                <div
-                    v-if="recentGames.length > 0"
-                    class="flex flex-col gap-4 pb-2"
-                >
-                    <div
-                        v-for="game in recentGames"
-                        :key="game.id"
-                        class="bg-tertiary rounded-md p-5 border-l-4 border-l-accent-primary"
-                    >
-                        <div class="text-xs text-muted mb-2">
-                            {{ new Date(game.played_on).toLocaleDateString() }}
-                        </div>
-                        <div class="text-lg font-semibold flex items-center">
-                            <span class="text-muted mr-2">Winner:</span>
-                            <span class="text-mtg-red flex items-center gap-1">
-                                <Icon name="mdi:crown" class="text-amber-400" />
-                                {{ game.players?.name || "Draw" }}
-                            </span>
-                        </div>
-                    </div>
-                    <NuxtLink
-                        to="/games"
-                        class="btn btn-secondary mt-4 w-full flex justify-center"
-                        >View All Games and Details</NuxtLink
-                    >
-                </div>
-
-                <div
-                    v-else
-                    class="flex flex-col items-center justify-center p-12 text-center text-muted"
-                >
-                    <Icon name="mdi:inbox" class="text-5xl mb-4 opacity-50" />
-                    <p>No games recorded yet. Start playing!</p>
-                    <NuxtLink to="/games" class="btn btn-primary mt-6"
-                        >Record Game</NuxtLink
-                    >
-                </div>
-            </div>
         </div>
     </div>
 </template>
@@ -184,7 +175,6 @@ import { ref, onMounted } from "vue";
 
 const db = useDb();
 const isLoading = ref(true);
-const showRecordForm = ref(false);
 const leaderboardRef = ref(null);
 
 const metrics = ref({
@@ -214,14 +204,6 @@ const loadData = async () => {
         console.error("Failed to load dashboard metrics:", error);
     } finally {
         isLoading.value = false;
-    }
-};
-
-const onGameSaved = () => {
-    showRecordForm.value = false;
-    loadData();
-    if (leaderboardRef.value?.fetchData) {
-        leaderboardRef.value.fetchData();
     }
 };
 

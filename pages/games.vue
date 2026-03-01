@@ -66,6 +66,7 @@
 import { ref, onMounted } from "vue";
 
 const db = useDb();
+const route = useRoute();
 
 const games = ref([]);
 const isLoading = ref(true);
@@ -89,5 +90,8 @@ const onGameSaved = () => {
 
 onMounted(() => {
     loadData();
+    if (route.query.action === "record") {
+        showAddForm.value = true;
+    }
 });
 </script>
