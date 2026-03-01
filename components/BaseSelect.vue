@@ -156,15 +156,21 @@ const filteredOptions = computed(() => {
 });
 
 // Focus / Open handlers
-const open = () => {
+const open = (event) => {
     if (props.disabled) return;
     isOpen.value = true;
     highlightedIndex.value = props.options.findIndex(
         (opt) => opt.value === props.modelValue,
     );
 
-    // Optional: clear text on open to show placeholder and prompt search
-    // searchQuery.value = ''
+    // Scroll into view on mobile
+    if (window.innerWidth < 768 && event && event.target) {
+        setTimeout(() => {
+            const y =
+                event.target.getBoundingClientRect().top + window.scrollY - 20;
+            window.scrollTo({ top: y, behavior: "smooth" });
+        }, 150);
+    }
 };
 
 const close = () => {
