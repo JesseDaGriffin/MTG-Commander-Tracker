@@ -77,7 +77,7 @@
                 </button>
             </form>
 
-            <div class="text-center mt-4">
+            <div v-if="allowSignUp" class="text-center mt-4">
                 <p class="text-sm text-muted">
                     {{
                         isSignUp
@@ -112,6 +112,7 @@ const router = useRouter();
 const email = ref("");
 const password = ref("");
 const isSignUp = ref(false);
+const allowSignUp = ref(false); // Temporarily disabled for production launch
 const isLoading = ref(false);
 const errorMsg = ref("");
 const successMsg = ref("");
@@ -129,6 +130,10 @@ const handleAuth = async () => {
 
     try {
         if (isSignUp.value) {
+            if (!allowSignUp.value) {
+                errorMsg.value = "Sign ups are currently disabled.";
+                return;
+            }
             const { error } = await supabase.auth.signUp({
                 email: email.value,
                 password: password.value,
