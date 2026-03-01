@@ -41,6 +41,7 @@
                     v-for="game in games"
                     :key="game.id"
                     :game="game"
+                    @updated="loadData"
                 />
             </div>
 

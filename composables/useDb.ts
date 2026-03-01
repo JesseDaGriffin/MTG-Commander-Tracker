@@ -91,5 +91,19 @@ export const useDb = () => {
             if (error) console.error(error);
             return data || [];
         },
+
+        async updateGameWinner(
+            gameId: string,
+            winnerId: string,
+            notes: string = "",
+        ) {
+            const { error } = await supabase
+                .from("games")
+                .update({ winner_id: winnerId, is_draw: false, notes })
+                .eq("id", gameId);
+
+            if (error) throw error;
+            return true;
+        },
     };
 };

@@ -4,8 +4,8 @@
     >
         <!-- Header: Date & Winner (Clickable to expand) -->
         <div
-            class="flex flex-col gap-3 justify-start items-start border-border-color pb-1 cursor-pointer group"
-            :class="{ 'border-b pb-3': isExpanded }"
+            class="flex flex-col gap-3 justify-start items-start border-border-color pb-1 cursor-pointer group relative z-10"
+            :class="{ 'border-b pb-3': isExpanded || isEditingWinner }"
             @click="isExpanded = !isExpanded"
         >
             <div class="flex justify-between w-full items-start">
@@ -13,14 +13,32 @@
                     <div class="text-lg font-semibold flex items-center">
                         <span class="text-muted mr-2">Winner:</span>
                         <span
+                            v-if="game.winner_id"
                             class="text-mtg-red flex items-center gap-1 font-bold"
                         >
                             <Icon
-                                v-if="game.winner_id"
                                 name="mdi:crown"
                                 class="text-amber-400 text-xl"
                             />
-                            {{ game.players?.name || "Draw" }}
+                            {{ game.players?.name }}
+                        </span>
+                        <span
+                            v-else-if="game.is_draw"
+                            class="text-mtg-red font-bold"
+                            >Draw / Tie</span
+                        >
+                        <span
+                            v-else
+                            class="text-secondary font-bold flex items-center gap-2"
+                        >
+                            TBD
+                            <button
+                                v-if="!isEditingWinner"
+                                @click.stop="isEditingWinner = true"
+                                class="btn btn-secondary text-xs px-2 py-1 h-auto min-h-0 ml-2"
+                            >
+                                Set Winner
+                            </button>
                         </span>
                     </div>
                     <div
@@ -49,6 +67,65 @@
                 class="text-muted text-sm italic bg-bg-secondary p-2 rounded w-full sm:w-fit border border-white/5"
             >
                 "{{ game.notes }}"
+            </div>
+
+            <!-- Edit Winner Form -->
+            <div
+                v-if="isEditingWinner"
+                class="w-full bg-bg-secondary p-3 mt-2 rounded-md border border-white/5 animate-fade-in"
+                @click.stop
+            >
+                <div class="mb-3">
+                    <label class="block text-sm font-medium text-secondary mb-2"
+                        >Select Winner</label
+                    >
+                    <BaseSelect
+                        v-model="selectedWinnerId"
+                        class="w-full"
+                        placeholder="-- Choose Winner --"
+                        required
+                        :options="
+                            game.game_participants.map((p) => ({
+                                label: p.players?.name || 'Unknown',
+                                value: p.player_id,
+                            }))
+                        "
+                    />
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-secondary mb-2"
+                        >Notes (Optional)</label
+                    >
+                    <textarea
+                        v-model="editNotes"
+                        class="form-input"
+                        rows="2"
+                        placeholder="Any memorable moments?"
+                    ></textarea>
+                </div>
+
+                <div class="flex gap-2 justify-end">
+                    <button
+                        class="btn border border-white/10 text-sm"
+                        @click="isEditingWinner = false"
+                        :disabled="isSaving"
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        class="btn btn-primary px-4 bg-emerald-600 hover:bg-emerald-500"
+                        @click="saveWinner"
+                        :disabled="!selectedWinnerId || isSaving"
+                    >
+                        <Icon
+                            v-if="isSaving"
+                            name="mdi:loading"
+                            class="animate-spin mr-2"
+                        />
+                        Save
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -101,7 +178,7 @@
 </template>
 
 <script setup>
-import { defineProps, ref, computed } from "vue";
+import { defineProps, ref, computed, defineEmits } from "vue";
 
 const props = defineProps({
     game: {
@@ -110,7 +187,33 @@ const props = defineProps({
     },
 });
 
+const emit = defineEmits(["updated"]);
+
 const isExpanded = ref(false);
+const isEditingWinner = ref(false);
+const selectedWinnerId = ref("");
+const editNotes = ref(props.game.notes || "");
+const isSaving = ref(false);
+
+const saveWinner = async () => {
+    if (!selectedWinnerId.value) return;
+    isSaving.value = true;
+    try {
+        const db = useDb();
+        await db.updateGameWinner(
+            props.game.id,
+            selectedWinnerId.value,
+            editNotes.value,
+        );
+        emit("updated");
+        isEditingWinner.value = false;
+    } catch (err) {
+        console.error("Failed to save winner:", err);
+        alert("Failed to save winner.");
+    } finally {
+        isSaving.value = false;
+    }
+};
 
 const winnerDeckName = computed(() => {
     if (!props.game.winner_id) return null;

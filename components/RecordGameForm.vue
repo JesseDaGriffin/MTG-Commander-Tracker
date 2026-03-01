@@ -68,13 +68,13 @@
                 <label
                     class="block text-sm font-medium text-secondary mb-2"
                     for="winnerSelect"
-                    >Winner</label
+                    >Winner / Result</label
                 >
                 <BaseSelect
                     id="winnerSelect"
                     v-model="newGame.winnerId"
                     required
-                    placeholder="-- Select Winner --"
+                    placeholder="-- Select Result --"
                     :options="
                         validParticipants
                             .map((p) => ({
@@ -83,7 +83,11 @@
                             }))
                             .concat([
                                 {
-                                    label: '-- Draw / No Winner --',
+                                    label: '-- TBD / No Winner Yet --',
+                                    value: 'tbd',
+                                },
+                                {
+                                    label: '-- Draw / Tie --',
                                     value: 'draw',
                                 },
                             ])
@@ -118,7 +122,7 @@
                 <button
                     type="submit"
                     class="btn btn-primary"
-                    :disabled="isSubmitting || validParticipants.length < 2"
+                    :disabled="isSubmitting || !isFormValid"
                 >
                     <Icon
                         v-if="isSubmitting"
@@ -150,12 +154,20 @@ const newGame = ref({
         { playerId: "", deckId: "" },
         { playerId: "", deckId: "" },
     ],
-    winnerId: "",
+    winnerId: "tbd",
     notes: "",
 });
 
 const validParticipants = computed(() => {
     return newGame.value.participants.filter((p) => p.playerId);
+});
+
+const isFormValid = computed(() => {
+    const activeParticipants = validParticipants.value;
+    if (activeParticipants.length < 2) return false;
+    if (activeParticipants.some((p) => !p.deckId)) return false;
+    if (!newGame.value.winnerId) return false;
+    return true;
 });
 
 const getDecksForPlayer = (playerId) => {
@@ -191,16 +203,18 @@ const onPlayerChange = (index) => {
 };
 
 const submitGame = async () => {
-    if (validParticipants.value.length < 2) return;
+    if (!isFormValid.value) return;
 
     isSubmitting.value = true;
     try {
         const gameData = {
             played_on: new Date().toISOString(),
             winner_id:
-                newGame.value.winnerId === "draw"
+                newGame.value.winnerId === "draw" ||
+                newGame.value.winnerId === "tbd"
                     ? null
                     : newGame.value.winnerId,
+            is_draw: newGame.value.winnerId === "draw",
             notes: newGame.value.notes,
         };
 
@@ -232,7 +246,7 @@ const submitGame = async () => {
                 { playerId: "", deckId: "" },
                 { playerId: "", deckId: "" },
             ],
-            winnerId: "",
+            winnerId: "tbd",
             notes: "",
         };
 
