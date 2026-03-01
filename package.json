@@ -19,6 +19,7 @@
     "devDependencies": {
         "@iconify/vue": "^5.0.0",
         "@nuxt/icon": "^2.2.1",
-        "@nuxtjs/tailwindcss": "^6.14.0"
+        "@nuxtjs/tailwindcss": "^6.14.0",
+        "netlify-cli": "^24.0.1"
     }
 }
