@@ -105,6 +105,13 @@
                 <Icon name="mdi:sword-cross" class="text-2xl" />
                 <span class="text-[0.7rem] font-medium">Games</span>
             </NuxtLink>
+            <button
+                @click="signOut"
+                class="flex flex-col items-center justify-center gap-1 text-secondary w-full h-full transition-colors hover:text-mtg-red"
+            >
+                <Icon name="mdi:logout" class="text-2xl" />
+                <span class="text-[0.7rem] font-medium">Log Out</span>
+            </button>
         </nav>
     </div>
 </template>
