@@ -62,18 +62,14 @@
                         <p class="text-sm text-muted mb-4">
                             Selected Commander
                         </p>
-                        <button
-                            class="btn btn-primary"
+                        <BaseButton
+                            variant="primary"
                             @click="saveDeck"
                             :disabled="isSubmitting || !selectedPlayerId"
+                            :loading="isSubmitting"
                         >
-                            <Icon
-                                v-if="isSubmitting"
-                                name="mdi:loading"
-                                class="animate-spin mr-2"
-                            />
                             Save Deck
-                        </button>
+                        </BaseButton>
                     </div>
                 </div>
             </div>

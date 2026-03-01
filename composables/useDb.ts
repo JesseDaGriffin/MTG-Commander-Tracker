@@ -6,7 +6,6 @@ export const useDb = () => {
 
     return {
         async getPlayers() {
-            if (!user.value) return [];
             const { data, error } = await supabase
                 .from("players")
                 .select("*")
@@ -17,7 +16,6 @@ export const useDb = () => {
         },
 
         async addPlayer(name: string) {
-            if (!user.value) throw new Error("Not authenticated");
             const { data, error } = await supabase
                 .from("players")
                 .insert([{ name }])
@@ -28,7 +26,6 @@ export const useDb = () => {
         },
 
         async getDecks() {
-            if (!user.value) return [];
             const { data, error } = await supabase
                 .from("decks")
                 .select(
@@ -49,7 +46,6 @@ export const useDb = () => {
             commanderName: string,
             commanderImageUrl: string,
         ) {
-            if (!user.value) throw new Error("Not authenticated");
             const { data, error } = await supabase
                 .from("decks")
                 .insert([
@@ -66,7 +62,6 @@ export const useDb = () => {
         },
 
         async deleteDeck(deckId: string) {
-            if (!user.value) throw new Error("Not authenticated");
             const { error } = await supabase
                 .from("decks")
                 .update({ deleted_at: new Date().toISOString() })
@@ -77,7 +72,6 @@ export const useDb = () => {
         },
 
         async getGames() {
-            if (!user.value) return [];
             const { data, error } = await supabase
                 .from("games")
                 .select(
@@ -96,6 +90,20 @@ export const useDb = () => {
 
             if (error) console.error(error);
             return data || [];
+        },
+
+        async updateGameWinner(
+            gameId: string,
+            winnerId: string,
+            notes: string = "",
+        ) {
+            const { error } = await supabase
+                .from("games")
+                .update({ winner_id: winnerId, is_draw: false, notes })
+                .eq("id", gameId);
+
+            if (error) throw error;
+            return true;
         },
     };
 };
