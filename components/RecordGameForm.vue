@@ -17,115 +17,152 @@
             </BaseButton>
         </div>
         <form @submit.prevent="submitGame">
-            <div class="mb-6">
-                <label class="block text-sm font-medium text-secondary mb-2"
-                    >Players & Decks</label
+            <div class="mb-8">
+                <label
+                    class="block text-sm font-semibold text-primary mb-3 uppercase tracking-wider"
                 >
+                    <Icon name="mdi:account-group" class="mr-1 mb-1" />
+                    Players
+                </label>
                 <div
                     v-for="(participant, index) in newGame.participants"
                     :key="index"
-                    class="flex gap-2 items-center mb-2"
-                    :style="{ zIndex: 50 - index, position: 'relative' }"
+                    class="bg-secondary rounded-lg p-3 mb-3 border border-border-color shadow-sm relative group flex flex-col gap-3 sm:flex-row sm:items-center transition-all hover:border-accent-primary"
+                    :style="{ zIndex: 50 - index }"
                 >
-                    <BaseSelect
-                        v-model="participant.playerId"
-                        class="flex-1"
-                        @change="onPlayerChange(index)"
-                        placeholder="-- Player --"
-                        :options="
-                            players.map((player) => ({
-                                label: player.name,
-                                value: player.id,
-                                disabled: newGame.participants.some(
-                                    (p, i) =>
-                                        i !== index && p.playerId === player.id,
-                                ),
-                            }))
-                        "
-                    />
+                    <div class="flex-1 min-w-[200px]">
+                        <label
+                            class="block text-xs font-medium text-muted mb-1 ml-1"
+                            >Player {{ index + 1 }}</label
+                        >
+                        <BaseSelect
+                            v-model="participant.playerId"
+                            class="w-full"
+                            @change="onPlayerChange(index)"
+                            placeholder="-- Select Player --"
+                            :options="
+                                players.map((player) => ({
+                                    label: player.name,
+                                    value: player.id,
+                                    disabled: newGame.participants.some(
+                                        (p, i) =>
+                                            i !== index &&
+                                            p.playerId === player.id,
+                                    ),
+                                }))
+                            "
+                        />
+                    </div>
 
-                    <BaseSelect
-                        v-model="participant.deckId"
-                        class="flex-1"
-                        :disabled="!participant.playerId"
-                        placeholder="-- Deck --"
-                        :options="
-                            getDecksForPlayer(participant.playerId).map(
-                                (deck) => ({
-                                    label: deck.commander_name,
-                                    value: deck.id,
-                                }),
-                            )
-                        "
-                    />
+                    <div class="hidden sm:block text-muted text-xl pt-5">
+                        <Icon name="mdi:sword-cross" />
+                    </div>
+
+                    <div class="flex-1 min-w-[200px]">
+                        <label
+                            class="block text-xs font-medium text-muted mb-1 ml-1"
+                            >Commander / Deck</label
+                        >
+                        <BaseSelect
+                            v-model="participant.deckId"
+                            class="w-full"
+                            :disabled="!participant.playerId"
+                            placeholder="-- Select Deck --"
+                            :options="
+                                getDecksForPlayer(participant.playerId).map(
+                                    (deck) => ({
+                                        label: deck.commander_name,
+                                        value: deck.id,
+                                    }),
+                                )
+                            "
+                        />
+                    </div>
 
                     <button
                         v-if="newGame.participants.length > 2"
                         type="button"
-                        class="text-red-500 hover:bg-tertiary p-2 rounded-md transition-colors"
+                        class="absolute -top-2 -right-2 bg-red-600 hover:bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center shadow-md opacity-0 group-hover:opacity-100 transition-opacity z-10"
                         @click="removeParticipant(index)"
+                        title="Remove Player"
                     >
-                        <Icon name="mdi:close" />
+                        <Icon name="mdi:close" class="text-sm" />
                     </button>
                 </div>
 
-                <div class="flex auto mt-2 justify-start w-full">
-                    <BaseButton
-                        v-if="newGame.participants.length < 6"
-                        type="button"
-                        variant="primary"
-                        customClass="text-sm"
-                        @click="addParticipant"
-                        icon="mdi:plus"
-                    >
-                        Add Player
-                    </BaseButton>
-                </div>
-            </div>
-
-            <div class="mb-6">
-                <label
-                    class="block text-sm font-medium text-secondary mb-2"
-                    for="winnerSelect"
-                    >Winner / Result</label
+                <button
+                    v-if="newGame.participants.length < 6"
+                    type="button"
+                    class="w-full flex items-center justify-center gap-2 py-3 border-2 border-dashed border-border-color rounded-lg text-muted hover:text-accent-primary hover:border-accent-primary hover:bg-tertiary transition-all font-medium mt-4"
+                    @click="addParticipant"
                 >
-                <BaseSelect
-                    id="winnerSelect"
-                    v-model="newGame.winnerId"
-                    required
-                    placeholder="-- Select Result --"
-                    :options="
-                        validParticipants
-                            .map((p) => ({
-                                label: getPlayerName(p.playerId),
-                                value: p.playerId,
-                            }))
-                            .concat([
-                                {
-                                    label: '-- TBD / No Winner Yet --',
-                                    value: 'tbd',
-                                },
-                                {
-                                    label: '-- Draw / Tie --',
-                                    value: 'draw',
-                                },
-                            ])
-                    "
-                />
+                    <Icon name="mdi:plus-circle-outline" class="text-xl" />
+                    Add Another Player
+                </button>
             </div>
 
             <div class="mb-8">
                 <label
-                    class="block text-sm font-medium text-secondary mb-2"
-                    for="gameNotes"
-                    >Notes (Optional)</label
+                    class="block text-sm font-semibold text-primary mb-3 uppercase tracking-wider"
                 >
+                    <Icon name="mdi:trophy-outline" class="mr-1 mb-1" />
+                    Winner / Result
+                </label>
+                <div class="flex flex-wrap gap-2">
+                    <button
+                        v-for="p in validParticipants"
+                        :key="p.playerId"
+                        type="button"
+                        @click="newGame.winnerId = p.playerId"
+                        class="px-4 py-2 rounded-full text-sm font-medium transition-all"
+                        :class="
+                            newGame.winnerId === p.playerId
+                                ? 'bg-accent-primary text-white shadow-md shadow-accent-primary/50 border border-accent-primary'
+                                : 'bg-tertiary text-text-secondary border border-border-color hover:border-accent-primary hover:text-text-primary'
+                        "
+                    >
+                        {{ getPlayerName(p.playerId) }}
+                    </button>
+                    <button
+                        type="button"
+                        @click="newGame.winnerId = 'draw'"
+                        class="px-4 py-2 rounded-full text-sm font-medium transition-all"
+                        :class="
+                            newGame.winnerId === 'draw'
+                                ? 'bg-orange-600 text-white shadow-md shadow-orange-600/50 border border-orange-500'
+                                : 'bg-tertiary text-text-secondary border border-border-color hover:border-orange-500 hover:text-text-primary'
+                        "
+                    >
+                        Draw / Tie
+                    </button>
+                    <button
+                        type="button"
+                        @click="newGame.winnerId = 'tbd'"
+                        class="px-4 py-2 rounded-full text-sm font-medium transition-all"
+                        :class="
+                            newGame.winnerId === 'tbd'
+                                ? 'bg-slate-600 text-white shadow-md shadow-slate-600/50 border border-slate-500'
+                                : 'bg-tertiary text-text-secondary border border-border-color hover:border-slate-500 hover:text-text-primary'
+                        "
+                    >
+                        TBD / No Winner Yet
+                    </button>
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <label
+                    class="block text-sm font-semibold text-primary mb-3 uppercase tracking-wider"
+                >
+                    <Icon name="mdi:note-text-outline" class="mr-1 mb-1" />
+                    Notes (Optional)
+                </label>
                 <textarea
                     id="gameNotes"
                     v-model="newGame.notes"
-                    class="form-input resize-none"
-                    rows="2"
-                    placeholder="Any memorable moments?"
+                    class="w-full bg-secondary border border-border-color rounded-lg p-3 text-sm text-primary placeholder-muted focus:outline-none focus:border-accent-primary focus:ring-1 focus:ring-accent-primary transition-all resize-none"
+                    rows="3"
+                    placeholder="Any memorable moments? Example: 'Marshall countered my Commander 3 times...'"
                 ></textarea>
             </div>
 
