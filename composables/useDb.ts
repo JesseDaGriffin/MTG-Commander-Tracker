@@ -36,6 +36,22 @@ export const useDb = () => {
             return data;
         },
 
+        async getDeckById(id: string) {
+            const { data, error } = await supabase
+                .from("decks")
+                .select(
+                    `
+          *,
+          players ( name )
+        `,
+                )
+                .eq("id", id)
+                .single();
+
+            if (error) throw error;
+            return data;
+        },
+
         async getDecks() {
             const { data, error } = await supabase
                 .from("decks")
@@ -92,8 +108,9 @@ export const useDb = () => {
           game_participants (
             id,
             player_id,
+            deck_id,
             players ( name ),
-            decks ( commander_name, commander_image_url )
+            decks ( id, commander_name, commander_image_url )
           )
         `,
                 )
@@ -125,8 +142,9 @@ export const useDb = () => {
           game_participants (
             id,
             player_id,
+            deck_id,
             players ( name ),
-            decks ( commander_name, commander_image_url )
+            decks ( id, commander_name, commander_image_url )
           )
         `,
                 )
