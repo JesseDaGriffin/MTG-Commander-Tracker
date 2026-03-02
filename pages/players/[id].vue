@@ -171,10 +171,17 @@
 
                 <div v-if="games.length > 0" class="flex flex-col gap-4">
                     <GameHistoryItem
-                        v-for="game in games.slice(0, 5)"
+                        v-for="game in games.slice(0, 3)"
                         :key="game.id"
                         :game="game"
                     />
+                    <BaseButton
+                        to="/games"
+                        variant="secondary"
+                        customClass="mt-4 w-full flex justify-center"
+                    >
+                        View All Games and Details
+                    </BaseButton>
                 </div>
                 <div
                     v-else

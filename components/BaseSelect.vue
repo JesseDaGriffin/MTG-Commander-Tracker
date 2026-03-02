@@ -38,15 +38,9 @@
 
         <!-- Options List Layer (Teleported or Absolute) -->
         <div
-            v-show="isOpen"
+            v-if="isOpen"
             id="options-list"
-            class="absolute left-0 w-full mt-1 bg-tertiary border border-border-color rounded-md shadow-lg max-h-60 overflow-y-auto z-[100]"
-            style="
-                min-width: 100%;
-                box-shadow:
-                    0 10px 25px -5px rgba(0, 0, 0, 0.5),
-                    0 8px 10px -6px rgba(0, 0, 0, 0.5);
-            "
+            class="absolute left-0 w-full min-w-full mt-1 bg-tertiary border border-border-color rounded-md shadow-xl max-h-60 overflow-y-auto z-[100]"
         >
             <ul role="listbox" class="py-1 m-0 list-none p-0">
                 <li

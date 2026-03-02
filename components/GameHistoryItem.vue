@@ -55,7 +55,12 @@
                         class="text-sm text-muted flex items-center gap-1 mt-1"
                     >
                         <Icon name="mdi:calendar-clock" />
-                        {{ formatDateTime(game.played_on) }}
+                        <ClientOnly>
+                            {{ formatDateTime(game.played_on) }}
+                            <template #fallback>
+                                <span>Loading date...</span>
+                            </template>
+                        </ClientOnly>
                     </div>
                 </div>
                 <Icon

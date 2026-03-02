@@ -67,33 +67,11 @@
                     v-if="recentGames.length > 0"
                     class="flex flex-col gap-4 pb-2"
                 >
-                    <div
+                    <GameHistoryItem
                         v-for="game in recentGames"
                         :key="game.id"
-                        class="bg-tertiary rounded-md p-5 border-l-4 border-l-accent-primary"
-                    >
-                        <div class="text-xs text-muted mb-2">
-                            {{ new Date(game.played_on).toLocaleDateString() }}
-                        </div>
-                        <div class="text-lg font-semibold flex items-center">
-                            <span class="text-muted mr-2">Winner:</span>
-                            <span
-                                v-if="game.winner_id"
-                                class="text-mtg-red flex items-center gap-1"
-                            >
-                                <Icon name="mdi:crown" class="text-amber-400" />
-                                {{ game.players?.name }}
-                            </span>
-                            <span
-                                v-else-if="game.is_draw"
-                                class="text-mtg-red font-bold"
-                                >Draw / Tie</span
-                            >
-                            <span v-else class="text-secondary font-bold"
-                                >TBD</span
-                            >
-                        </div>
-                    </div>
+                        :game="game"
+                    />
                     <BaseButton
                         to="/games"
                         variant="secondary"
