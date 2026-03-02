@@ -25,6 +25,17 @@ export const useDb = () => {
             return data[0];
         },
 
+        async getPlayerById(id: string) {
+            const { data, error } = await supabase
+                .from("players")
+                .select("*")
+                .eq("id", id)
+                .single();
+
+            if (error) throw error;
+            return data;
+        },
+
         async getDecks() {
             const { data, error } = await supabase
                 .from("decks")
