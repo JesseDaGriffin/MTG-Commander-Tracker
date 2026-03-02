@@ -69,9 +69,6 @@ body {
     color: var(--text-primary);
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
-    min-height: 100vh;
-    /* Mobile-first padding bottom to allow for bottom nav */
-    padding-bottom: var(--nav-height);
 }
 
 /* Typography styles */

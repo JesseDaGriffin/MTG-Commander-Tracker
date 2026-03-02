@@ -1,5 +1,5 @@
 <template>
-    <div class="flex flex-col min-h-screen">
+    <div class="flex flex-col min-h-[100dvh] pb-16 md:pb-0">
         <!-- Desktop Header -->
         <header
             class="sticky top-0 z-50 border-b border-border-color bg-slate-800/70 backdrop-blur-md hidden md:block"

@@ -1,6 +1,8 @@
 <template>
-    <div class="min-h-screen flex items-center justify-center p-4 bg-primary">
-        <div class="w-full max-w-[400px] p-8 card">
+    <div
+        class="fixed inset-0 flex items-center justify-center p-4 bg-primary overflow-hidden"
+    >
+        <div class="w-full max-w-[400px] p-8 card max-h-full overflow-y-auto">
             <div class="text-center mb-8">
                 <div class="relative inline-block mb-4">
                     <div
