@@ -1,6 +1,19 @@
 <template>
     <div class="card p-6">
-        <h3 class="text-xl font-bold mb-4">Record Game Result</h3>
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-xl font-bold">Record Game Result</h3>
+            <BaseButton
+                type="button"
+                variant="primary"
+                customClass="text-sm"
+                @click="loadLastGamePlayers"
+                icon="mdi:backup-restore"
+                :disabled="isLoadingLastGame"
+                :loading="isLoadingLastGame"
+            >
+                Load Last Group
+            </BaseButton>
+        </div>
         <form @submit.prevent="submitGame">
             <div class="mb-6">
                 <label class="block text-sm font-medium text-secondary mb-2"
@@ -54,16 +67,18 @@
                     </button>
                 </div>
 
-                <BaseButton
-                    v-if="newGame.participants.length < 6"
-                    type="button"
-                    variant="ghost"
-                    customClass="text-sm mt-2 bg-secondary border-none hover:bg-primary px-4 py-2"
-                    @click="addParticipant"
-                    icon="mdi:plus"
-                >
-                    Add Player
-                </BaseButton>
+                <div class="flex auto mt-2 justify-start w-full">
+                    <BaseButton
+                        v-if="newGame.participants.length < 6"
+                        type="button"
+                        variant="primary"
+                        customClass="text-sm"
+                        @click="addParticipant"
+                        icon="mdi:plus"
+                    >
+                        Add Player
+                    </BaseButton>
+                </div>
             </div>
 
             <div class="mb-6">
@@ -115,8 +130,16 @@
             <div class="flex gap-3 justify-end items-center">
                 <BaseButton
                     type="button"
+                    variant="ghost"
+                    @click="resetForm"
+                    :disabled="isSubmitting"
+                >
+                    Reset Selections
+                </BaseButton>
+                <BaseButton
+                    type="button"
                     variant="secondary"
-                    @click="$emit('cancel')"
+                    @click="handleCancel"
                     :disabled="isSubmitting"
                 >
                     Cancel
@@ -236,24 +259,72 @@ const submitGame = async () => {
 
         if (partError) throw partError;
 
-        // Reset form
-        newGame.value = {
-            participants: [
-                { playerId: "", deckId: "" },
-                { playerId: "", deckId: "" },
-                { playerId: "", deckId: "" },
-                { playerId: "", deckId: "" },
-            ],
-            winnerId: "tbd",
-            notes: "",
-        };
-
+        resetForm();
         emit("saved");
     } catch (error) {
         console.error("Failed to save game:", error);
         alert("Failed to save game. Please try again.");
     } finally {
         isSubmitting.value = false;
+    }
+};
+
+const resetForm = () => {
+    newGame.value = {
+        participants: [
+            { playerId: "", deckId: "" },
+            { playerId: "", deckId: "" },
+            { playerId: "", deckId: "" },
+            { playerId: "", deckId: "" },
+        ],
+        winnerId: "tbd",
+        notes: "",
+    };
+};
+
+const handleCancel = () => {
+    resetForm();
+    emit("cancel");
+};
+
+const isLoadingLastGame = ref(false);
+
+const loadLastGamePlayers = async () => {
+    isLoadingLastGame.value = true;
+    try {
+        const lastGames = await db.getGamesPaginated(1, 1);
+        if (lastGames && lastGames.length > 0) {
+            const lastGame = lastGames[0];
+            const previousParticipants = lastGame.game_participants;
+
+            if (previousParticipants && previousParticipants.length > 0) {
+                // Clear out defaults to match exactly the previous participant count
+                newGame.value.participants = [];
+
+                previousParticipants.forEach((p) => {
+                    newGame.value.participants.push({
+                        playerId: p.player_id,
+                        deckId: "", // Only set player, not deck
+                    });
+                });
+
+                // If it was less than 4, pad it out to at least 4 for visual consistency or just leave it.
+                // Leaving it matching exactly the last game is usually better.
+
+                // Clear winner and notes
+                newGame.value.winnerId = "tbd";
+                newGame.value.notes = "";
+            } else {
+                alert("Could not load players from the last game.");
+            }
+        } else {
+            alert("No previous games found to load.");
+        }
+    } catch (e) {
+        console.error("Error loading last game", e);
+        alert("Failed to load last game.");
+    } finally {
+        isLoadingLastGame.value = false;
     }
 };
 
