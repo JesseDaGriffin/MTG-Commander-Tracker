@@ -31,10 +31,11 @@
                 v-else-if="leaderboard.length > 0"
                 class="flex flex-col gap-3 pb-2 flex-grow"
             >
-                <div
+                <NuxtLink
                     v-for="(player, index) in leaderboard"
                     :key="player.id"
-                    class="flex items-center justify-between bg-bg-secondary p-3 rounded-md border border-white/5 transition-colors hover:bg-tertiary"
+                    :to="`/players/${player.id}`"
+                    class="flex items-center justify-between bg-bg-secondary p-3 rounded-md border border-white/5 transition-colors hover:bg-tertiary cursor-pointer"
                     :class="{
                         'ring-1 ring-amber-400/50 bg-amber-400/5': index === 0,
                     }"
@@ -71,7 +72,7 @@
                             >Wins</span
                         >
                     </div>
-                </div>
+                </NuxtLink>
             </div>
 
             <div

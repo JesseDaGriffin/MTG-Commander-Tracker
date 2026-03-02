@@ -57,6 +57,74 @@
             <!-- Leaderboard -->
             <LeaderboardWidget class="mb-8" ref="leaderboardRef" />
 
+            <!-- Chart Analytics -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <!-- Win Distribution -->
+                <div class="card p-6 flex flex-col">
+                    <h3
+                        class="text-xl font-bold mb-4 border-b border-border-color pb-2 flex items-center gap-2"
+                    >
+                        <Icon
+                            name="mdi:chart-arc"
+                            class="text-accent-primary text-2xl"
+                        />
+                        Overall Win Distribution
+                    </h3>
+                    <div
+                        class="relative h-64 flex justify-center items-center w-full grow"
+                    >
+                        <template v-if="winChartData">
+                            <Doughnut
+                                :data="winChartData"
+                                :options="doughnutOptions"
+                            />
+                        </template>
+                        <div
+                            v-else
+                            class="text-muted flex flex-col items-center"
+                        >
+                            <Icon
+                                name="mdi:chart-pie-outline"
+                                class="text-4xl mb-2 opacity-50"
+                            />
+                            <p>Not enough game data yet</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Top Decks -->
+                <div class="card p-6 flex flex-col">
+                    <h3
+                        class="text-xl font-bold mb-4 border-b border-border-color pb-2 flex items-center gap-2"
+                    >
+                        <Icon
+                            name="mdi:cards-outline"
+                            class="text-emerald-500 text-2xl"
+                        />
+                        Most Winning Decks
+                    </h3>
+                    <div
+                        class="h-64 flex justify-center items-center w-full grow"
+                    >
+                        <template
+                            v-if="deckMetaData?.datasets?.[0]?.data?.length > 0"
+                        >
+                            <Bar :data="deckMetaData" :options="barOptions" />
+                        </template>
+                        <div
+                            v-else
+                            class="text-muted flex flex-col items-center"
+                        >
+                            <Icon
+                                name="mdi:cards-playing-outline"
+                                class="text-4xl mb-2 opacity-50"
+                            />
+                            <p>Not enough deck data yet</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Recent Games -->
             <div class="card mt-6">
                 <h3 class="text-xl mb-4 border-b border-border-color pb-2">
@@ -67,33 +135,11 @@
                     v-if="recentGames.length > 0"
                     class="flex flex-col gap-4 pb-2"
                 >
-                    <div
+                    <GameHistoryItem
                         v-for="game in recentGames"
                         :key="game.id"
-                        class="bg-tertiary rounded-md p-5 border-l-4 border-l-accent-primary"
-                    >
-                        <div class="text-xs text-muted mb-2">
-                            {{ new Date(game.played_on).toLocaleDateString() }}
-                        </div>
-                        <div class="text-lg font-semibold flex items-center">
-                            <span class="text-muted mr-2">Winner:</span>
-                            <span
-                                v-if="game.winner_id"
-                                class="text-mtg-red flex items-center gap-1"
-                            >
-                                <Icon name="mdi:crown" class="text-amber-400" />
-                                {{ game.players?.name }}
-                            </span>
-                            <span
-                                v-else-if="game.is_draw"
-                                class="text-mtg-red font-bold"
-                                >Draw / Tie</span
-                            >
-                            <span v-else class="text-secondary font-bold"
-                                >TBD</span
-                            >
-                        </div>
-                    </div>
+                        :game="game"
+                    />
                     <BaseButton
                         to="/games"
                         variant="secondary"
@@ -183,7 +229,27 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
+import { useDb } from "~/composables/useDb";
+import {
+    Chart as ChartJS,
+    ArcElement,
+    Tooltip,
+    Legend,
+    CategoryScale,
+    LinearScale,
+    BarElement,
+} from "chart.js";
+import { Doughnut, Bar } from "vue-chartjs";
+
+ChartJS.register(
+    ArcElement,
+    Tooltip,
+    Legend,
+    CategoryScale,
+    LinearScale,
+    BarElement,
+);
 
 const db = useDb();
 const isLoading = ref(true);
@@ -196,6 +262,156 @@ const metrics = ref({
 });
 
 const recentGames = ref([]);
+const allGames = ref([]);
+const allPlayers = ref([]);
+
+const CHART_COLORS = [
+    "#6366f1", // Indigo 500 (Theme Accent)
+    "#10b981", // Emerald 500 (Wins highlight)
+    "#8b5cf6", // Violet 500
+    "#0ea5e9", // Sky 500
+    "#f59e0b", // Amber 500 (Trophy highlight)
+    "#14b8a6", // Teal 500
+    "#3b82f6", // Blue 500
+    "#475569", // Slate 600
+];
+
+// --- Overall Win Distribution (Doughnut) ---
+const winChartData = computed(() => {
+    const winCounts = {};
+    allGames.value.forEach((g) => {
+        if (g.winner_id) {
+            winCounts[g.winner_id] = (winCounts[g.winner_id] || 0) + 1;
+        }
+    });
+
+    const entries = Object.entries(winCounts).sort((a, b) => b[1] - a[1]);
+    const labels = [];
+    const data = [];
+    const bgColors = [];
+    const hoverBgColors = [];
+
+    entries.forEach(([playerId, wins], index) => {
+        const p = allPlayers.value.find((p) => p.id === playerId);
+        labels.push(p ? p.name : "Unknown");
+        data.push(wins);
+
+        const colorHue = CHART_COLORS[index % CHART_COLORS.length];
+        bgColors.push(`${colorHue}cc`); // 80% opacity
+        hoverBgColors.push(`${colorHue}ff`); // 100% opacity
+    });
+
+    if (data.length === 0) return null;
+
+    return {
+        labels,
+        datasets: [
+            {
+                backgroundColor: bgColors,
+                hoverBackgroundColor: hoverBgColors,
+                borderColor: "#0f172a",
+                borderWidth: 2,
+                data,
+                cutout: "60%",
+            },
+        ],
+    };
+});
+
+const doughnutOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+        legend: {
+            position: "right",
+            labels: {
+                color: "#cbd5e1",
+                font: { family: "'Inter', sans-serif" },
+                boxWidth: 12,
+            },
+        },
+        tooltip: {
+            backgroundColor: "rgba(15, 23, 42, 0.9)",
+            titleColor: "#f8fafc",
+            bodyColor: "#e2e8f0",
+            borderColor: "#334155",
+            borderWidth: 1,
+            padding: 10,
+        },
+    },
+};
+
+// --- Top Decks Meta (Bar) ---
+const deckMetaData = computed(() => {
+    const deckWins = {};
+    allGames.value.forEach((g) => {
+        if (g.winner_id) {
+            const winnerParticipant = g.game_participants?.find(
+                (p) => p.player_id === g.winner_id,
+            );
+            if (winnerParticipant?.decks) {
+                const deckName =
+                    winnerParticipant.decks.commander_name || "Unknown Deck";
+                deckWins[deckName] = (deckWins[deckName] || 0) + 1;
+            }
+        }
+    });
+
+    const entries = Object.entries(deckWins)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 5); // display top 5
+
+    return {
+        labels: entries.map((e) =>
+            e[0].length > 18 ? e[0].substring(0, 18) + "..." : e[0],
+        ),
+        datasets: [
+            {
+                label: "Total Wins",
+                backgroundColor: "rgba(16, 185, 129, 0.8)", // emerald-500
+                hoverBackgroundColor: "rgba(16, 185, 129, 1)",
+                borderRadius: 4,
+                data: entries.map((e) => e[1]),
+            },
+        ],
+    };
+});
+
+const barOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+        y: {
+            beginAtZero: true,
+            ticks: {
+                stepSize: 1,
+                color: "#94a3b8",
+                font: { family: "'Inter', sans-serif" },
+            },
+            grid: { color: "#334155", tickColor: "transparent" },
+            border: { display: false },
+        },
+        x: {
+            ticks: {
+                color: "#cbd5e1",
+                font: { family: "'Inter', sans-serif", size: 10 },
+            },
+            grid: { display: false },
+            border: { display: false },
+        },
+    },
+    plugins: {
+        legend: { display: false },
+        tooltip: {
+            backgroundColor: "rgba(15, 23, 42, 0.9)",
+            titleColor: "#f8fafc",
+            bodyColor: "#e2e8f0",
+            borderColor: "#334155",
+            borderWidth: 1,
+            padding: 10,
+        },
+    },
+};
 
 const loadData = async () => {
     isLoading.value = true;
@@ -210,7 +426,8 @@ const loadData = async () => {
         metrics.value.totalDecks = decks.length;
         metrics.value.totalGames = games.length;
 
-        // Get top 3 most recent games
+        allGames.value = games;
+        allPlayers.value = players;
         recentGames.value = games.slice(0, 3);
     } catch (error) {
         console.error("Failed to load dashboard metrics:", error);

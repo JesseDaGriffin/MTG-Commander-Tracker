@@ -103,6 +103,40 @@ export const useDb = () => {
             return data || [];
         },
 
+        async getGamesCount() {
+            const { count, error } = await supabase
+                .from("games")
+                .select("*", { count: "exact", head: true });
+
+            if (error) console.error(error);
+            return count || 0;
+        },
+
+        async getGamesPaginated(page: number, pageSize: number = 10) {
+            const from = (page - 1) * pageSize;
+            const to = from + pageSize - 1;
+
+            const { data, error } = await supabase
+                .from("games")
+                .select(
+                    `
+          *,
+          players!games_winner_id_fkey ( name ),
+          game_participants (
+            id,
+            player_id,
+            players ( name ),
+            decks ( commander_name, commander_image_url )
+          )
+        `,
+                )
+                .order("played_on", { ascending: false })
+                .range(from, to);
+
+            if (error) console.error(error);
+            return data || [];
+        },
+
         async updateGameWinner(
             gameId: string,
             winnerId: string,
