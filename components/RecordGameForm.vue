@@ -1,11 +1,13 @@
 <template>
     <div class="card p-6">
-        <div class="flex justify-between items-center mb-4">
+        <div
+            class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-6 border-b border-border-color pb-4 sm:border-none sm:pb-0"
+        >
             <h3 class="text-xl font-bold">Record Game Result</h3>
             <BaseButton
                 type="button"
                 variant="primary"
-                customClass="text-sm"
+                customClass="text-sm sm:w-auto flex justify-center"
                 @click="loadLastGamePlayers"
                 icon="mdi:backup-restore"
                 :disabled="isLoadingLastGame"
