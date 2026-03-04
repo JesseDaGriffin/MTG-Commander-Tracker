@@ -23,7 +23,12 @@
 - **Auto-Imports:** Nuxt 4 automatically imports components and composables. Do not explicitly import `.vue` files from `~/components` or functions from `~/composables` unless Nuxt's auto-import fails to resolve them.
 - **Strong Typing (TypeScript):** Always use TypeScript. Rely on generated Supabase types (`database.types.ts`) for all database operations.
 
-## 5. Security & Data Fetching
+## 5. Documentation
+
+- **Folder Structure:** All project documentation, setup guides, and architectural notes must be placed inside the `app/docs/` directory. Do not create nested `doc/` or `docs/docs/` folders.
+- **Markdown:** Write all documentation in clear, concise Markdown (`.md`).
+
+## 6. Security & Data Fetching
 
 - **Row Level Security (RLS):** All data fetching and mutations MUST occur within the context of an authenticated user. Ensure `user_id` is automatically handled by Postgres `DEFAULT auth.uid()` or explicitly passed when creating records.
 - **Soft Deletes:** Where possible, prefer "Soft Deletes" (updating a `deleted_at` timestamp) over hard deletes (`DELETE FROM table`) to preserve historical constraints, such as game records referencing deleted decks.
