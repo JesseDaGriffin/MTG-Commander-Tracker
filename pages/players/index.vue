@@ -24,6 +24,7 @@
                         v-model="newPlayerName"
                         type="text"
                         placeholder="Enter player name"
+                        maxlength="50"
                         required
                         :disabled="isSubmitting"
                     />

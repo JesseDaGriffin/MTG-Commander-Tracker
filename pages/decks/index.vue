@@ -121,8 +121,6 @@
                             v-for="deck in playerDecks"
                             :key="deck.id"
                             :deck="deck"
-                            :is-deleting="isDeleting === deck.id"
-                            @delete="deleteDeck"
                             @preview="openPreview"
                         />
                     </div>
@@ -162,7 +160,6 @@ const selectedCommander = ref(null);
 const players = ref([]);
 const selectedPlayerId = ref("");
 const isSubmitting = ref(false);
-const isDeleting = ref(null);
 const decks = ref([]);
 const isLoading = ref(true);
 const commanderSearchRef = ref(null);
@@ -192,8 +189,17 @@ const groupedDecks = computed(() => {
     const groups = {};
     const query = playerSearchQuery.value.toLowerCase().trim();
 
-    decks.value.forEach((deck) => {
-        const playerName = deck.players?.name || "Unknown Player";
+    // Sort decks by commander name first
+    const sortedDecks = [...decks.value].sort((a, b) =>
+        a.commander_name.localeCompare(b.commander_name),
+    );
+
+    sortedDecks.forEach((deck) => {
+        // Skip decks if the owner was soft-deleted
+        const activePlayer = players.value.find((p) => p.id === deck.player_id);
+        if (!activePlayer) return;
+
+        const playerName = activePlayer.name;
 
         if (query && !playerName.toLowerCase().includes(query)) {
             return;
@@ -204,7 +210,16 @@ const groupedDecks = computed(() => {
         }
         groups[playerName].push(deck);
     });
-    return groups;
+
+    // Sort the grouped object keys alphabetically by player name
+    const sortedGroups = {};
+    Object.keys(groups)
+        .sort((a, b) => a.localeCompare(b))
+        .forEach((key) => {
+            sortedGroups[key] = groups[key];
+        });
+
+    return sortedGroups;
 });
 
 const loadInitialData = async () => {
@@ -251,27 +266,6 @@ const saveDeck = async () => {
         alert("Failed to save deck.");
     } finally {
         isSubmitting.value = false;
-    }
-};
-
-const deleteDeck = async (deck) => {
-    if (
-        !confirm(
-            `Are you sure you want to remove ${deck.commander_name} from the list?`,
-        )
-    ) {
-        return;
-    }
-
-    isDeleting.value = deck.id;
-    try {
-        await db.deleteDeck(deck.id);
-        await loadInitialData();
-    } catch (error) {
-        console.error("Error soft-deleting deck:", error);
-        alert("Failed to delete deck.");
-    } finally {
-        isDeleting.value = null;
     }
 };
 

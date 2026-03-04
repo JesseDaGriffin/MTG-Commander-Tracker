@@ -82,7 +82,7 @@
                     <button
                         v-if="newGame.participants.length > 2"
                         type="button"
-                        class="absolute -top-2 -right-2 bg-red-600 hover:bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center shadow-md opacity-0 group-hover:opacity-100 transition-opacity z-10"
+                        class="absolute -top-2 -right-2 bg-red-600 hover:bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center shadow-md opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity z-10"
                         @click="removeParticipant(index)"
                         title="Remove Player"
                     >
@@ -162,6 +162,7 @@
                     v-model="newGame.notes"
                     class="w-full bg-secondary border border-border-color rounded-lg p-3 text-sm text-primary placeholder-muted focus:outline-none focus:border-accent-primary focus:ring-1 focus:ring-accent-primary transition-all resize-none"
                     rows="3"
+                    maxlength="255"
                     placeholder="Any memorable moments? Example: 'Marshall countered my Commander 3 times...'"
                 ></textarea>
             </div>
@@ -259,7 +260,14 @@ const removeParticipant = (index) => {
 };
 
 const onPlayerChange = (index) => {
-    newGame.value.participants[index].deckId = "";
+    const participant = newGame.value.participants[index];
+    const availableDecks = getDecksForPlayer(participant.playerId);
+
+    if (availableDecks.length === 1) {
+        participant.deckId = availableDecks[0].id;
+    } else {
+        participant.deckId = "";
+    }
 };
 
 const submitGame = async () => {
@@ -341,9 +349,13 @@ const loadLastGamePlayers = async () => {
                 newGame.value.participants = [];
 
                 previousParticipants.forEach((p) => {
+                    const availableDecks = getDecksForPlayer(p.player_id);
                     newGame.value.participants.push({
                         playerId: p.player_id,
-                        deckId: "", // Only set player, not deck
+                        deckId:
+                            availableDecks.length === 1
+                                ? availableDecks[0].id
+                                : "",
                     });
                 });
 

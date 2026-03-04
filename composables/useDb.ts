@@ -9,6 +9,7 @@ export const useDb = () => {
             const { data, error } = await supabase
                 .from("players")
                 .select("*")
+                .is("deleted_at", null)
                 .order("name");
 
             if (error) console.error(error);
@@ -34,6 +35,16 @@ export const useDb = () => {
 
             if (error) throw error;
             return data;
+        },
+
+        async deletePlayer(playerId: string) {
+            const { error } = await supabase
+                .from("players")
+                .update({ deleted_at: new Date().toISOString() })
+                .eq("id", playerId);
+
+            if (error) throw error;
+            return true;
         },
 
         async getDeckById(id: string) {

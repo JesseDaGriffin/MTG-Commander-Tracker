@@ -9,7 +9,7 @@
 
         <div v-else-if="player">
             <!-- Back Navigation -->
-            <div class="mb-4">
+            <div class="mb-4 flex flex-row justify-between items-center w-full">
                 <NuxtLink
                     to="/players"
                     class="inline-flex items-center gap-2 text-secondary hover:text-accent-primary transition-colors font-medium"
@@ -17,7 +17,36 @@
                     <Icon name="mdi:arrow-left" class="text-xl" /> Back to
                     Players
                 </NuxtLink>
+
+                <BaseButton
+                    variant="danger"
+                    @click="showDeleteModal = true"
+                    class="text-sm py-1.5 px-3"
+                >
+                    <Icon name="mdi:delete" class="text-lg mr-1" />
+                    Delete Player
+                </BaseButton>
             </div>
+
+            <!-- Delete Confirmation Modal -->
+            <BaseModal
+                v-model="showDeleteModal"
+                title="Delete Player"
+                :loading="isDeleting"
+                @confirm="executeDelete"
+            >
+                <p>
+                    Are you sure you want to remove
+                    <span class="font-bold text-primary">{{
+                        player.name
+                    }}</span>
+                    from the directory?
+                </p>
+                <p class="text-xs text-muted mt-2">
+                    This action cannot be undone, though past games with this
+                    player will remain in history.
+                </p>
+            </BaseModal>
 
             <!-- Page Header -->
             <PageHeader
@@ -224,7 +253,7 @@
 
 <script setup>
 import { ref, onMounted, computed, onBeforeUnmount } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useDb } from "~/composables/useDb";
 import {
     Chart as ChartJS,
@@ -247,6 +276,7 @@ ChartJS.register(
 );
 
 const route = useRoute();
+const router = useRouter();
 const playerId = route.params.id;
 const db = useDb();
 
@@ -256,6 +286,8 @@ const displayedGames = ref([]); // games currently shown (paginated in memory)
 const isLoading = ref(true);
 
 const isLoadingMore = ref(false);
+const isDeleting = ref(false);
+const showDeleteModal = ref(false);
 const loadMoreTrigger = ref(null);
 let observer = null;
 
@@ -430,6 +462,20 @@ const loadMore = () => {
 onBeforeUnmount(() => {
     if (observer) observer.disconnect();
 });
+
+const executeDelete = async () => {
+    isDeleting.value = true;
+    try {
+        await db.deletePlayer(playerId);
+        showDeleteModal.value = false;
+        router.push("/players");
+    } catch (error) {
+        console.error("Error deleting player:", error);
+        alert("Failed to delete player.");
+    } finally {
+        isDeleting.value = false;
+    }
+};
 
 const loadData = async () => {
     isLoading.value = true;
