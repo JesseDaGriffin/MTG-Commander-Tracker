@@ -82,7 +82,7 @@
                     <button
                         v-if="newGame.participants.length > 2"
                         type="button"
-                        class="absolute -top-2 -right-2 bg-red-600 hover:bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center shadow-md opacity-0 group-hover:opacity-100 transition-opacity z-10"
+                        class="absolute -top-2 -right-2 bg-red-600 hover:bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center shadow-md opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity z-10"
                         @click="removeParticipant(index)"
                         title="Remove Player"
                     >

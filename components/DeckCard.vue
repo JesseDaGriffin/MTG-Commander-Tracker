@@ -31,16 +31,16 @@
 
         <button
             @click.stop="onDelete"
-            class="absolute right-3 top-3 text-white bg-red-600 hover:bg-red-500 hover:scale-105 w-8 h-8 rounded-full transition-all flex items-center justify-center shadow-md shadow-red-900/40 opacity-80 hover:opacity-100"
+            class="absolute -top-2 -right-2 bg-red-600 hover:bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center shadow-md z-10 transition-opacity"
             title="Delete Deck"
             :disabled="isDeleting"
         >
             <Icon
                 v-if="isDeleting"
                 name="mdi:loading"
-                class="animate-spin text-base"
+                class="animate-spin text-sm"
             />
-            <Icon v-else name="mdi:delete-outline" class="text-base" />
+            <Icon v-else name="mdi:close" class="text-sm" />
         </button>
     </div>
 </template>
