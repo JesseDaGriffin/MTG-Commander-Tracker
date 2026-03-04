@@ -27,6 +27,8 @@
 
 - **Folder Structure:** All project documentation, setup guides, and architectural notes must be placed inside the `app/docs/` directory. Do not create nested `doc/` or `docs/docs/` folders.
 - **Markdown:** Write all documentation in clear, concise Markdown (`.md`).
+- **Scope & Guide Maintenance:** Whenever functionality changes or new features are added, developers (and AI assistants) must remember to update `app/docs/scope_and_guide.md` to reflect the new state of the application.
+- **Screenshots:** Do not include or generate screenshots in documentation or UI summaries unless explicitly requested by the user.
 
 ## 6. Security & Data Fetching
 
