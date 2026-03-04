@@ -121,8 +121,6 @@
                             v-for="deck in playerDecks"
                             :key="deck.id"
                             :deck="deck"
-                            :is-deleting="isDeleting === deck.id"
-                            @delete="deleteDeck"
                             @preview="openPreview"
                         />
                     </div>
@@ -162,7 +160,6 @@ const selectedCommander = ref(null);
 const players = ref([]);
 const selectedPlayerId = ref("");
 const isSubmitting = ref(false);
-const isDeleting = ref(null);
 const decks = ref([]);
 const isLoading = ref(true);
 const commanderSearchRef = ref(null);
@@ -251,27 +248,6 @@ const saveDeck = async () => {
         alert("Failed to save deck.");
     } finally {
         isSubmitting.value = false;
-    }
-};
-
-const deleteDeck = async (deck) => {
-    if (
-        !confirm(
-            `Are you sure you want to remove ${deck.commander_name} from the list?`,
-        )
-    ) {
-        return;
-    }
-
-    isDeleting.value = deck.id;
-    try {
-        await db.deleteDeck(deck.id);
-        await loadInitialData();
-    } catch (error) {
-        console.error("Error soft-deleting deck:", error);
-        alert("Failed to delete deck.");
-    } finally {
-        isDeleting.value = null;
     }
 };
 

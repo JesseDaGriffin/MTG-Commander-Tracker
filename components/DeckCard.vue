@@ -28,20 +28,6 @@
                 {{ deck.commander_name }}
             </h4>
         </div>
-
-        <button
-            @click.stop="onDelete"
-            class="absolute -top-2 -right-2 bg-red-600 hover:bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center shadow-md z-10 transition-opacity"
-            title="Delete Deck"
-            :disabled="isDeleting"
-        >
-            <Icon
-                v-if="isDeleting"
-                name="mdi:loading"
-                class="animate-spin text-sm"
-            />
-            <Icon v-else name="mdi:close" class="text-sm" />
-        </button>
     </div>
 </template>
 
@@ -54,21 +40,13 @@ const props = defineProps({
         type: Object,
         required: true,
     },
-    isDeleting: {
-        type: Boolean,
-        default: false,
-    },
 });
 
-const emit = defineEmits(["delete", "preview"]);
+const emit = defineEmits(["preview"]);
 const router = useRouter();
 
 const navigateToDeck = () => {
     router.push(`/decks/${props.deck.id}`);
-};
-
-const onDelete = () => {
-    emit("delete", props.deck);
 };
 
 const onPreviewClick = (e) => {

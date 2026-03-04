@@ -9,14 +9,43 @@
 
         <div v-else-if="deck">
             <!-- Back Navigation -->
-            <div class="mb-4">
+            <div class="mb-4 flex flex-row justify-between items-center w-full">
                 <NuxtLink
                     to="/decks"
                     class="inline-flex items-center gap-2 text-secondary hover:text-accent-primary transition-colors font-medium"
                 >
                     <Icon name="mdi:arrow-left" class="text-xl" /> Back to Decks
                 </NuxtLink>
+
+                <BaseButton
+                    variant="danger"
+                    @click="showDeleteModal = true"
+                    class="text-sm py-1.5 px-3"
+                >
+                    <Icon name="mdi:delete" class="text-lg mr-1" />
+                    Delete Deck
+                </BaseButton>
             </div>
+
+            <!-- Delete Confirmation Modal -->
+            <BaseModal
+                v-model="showDeleteModal"
+                title="Delete Deck"
+                :loading="isDeleting"
+                @confirm="executeDelete"
+            >
+                <p>
+                    Are you sure you want to remove
+                    <span class="font-bold text-primary">{{
+                        deck.commander_name
+                    }}</span>
+                    from the Armory?
+                </p>
+                <p class="text-xs text-muted mt-2">
+                    This action cannot be undone, though past games with this
+                    deck will remain in history.
+                </p>
+            </BaseModal>
 
             <!-- Page Header -->
             <PageHeader
@@ -223,7 +252,7 @@
 
 <script setup>
 import { ref, onMounted, computed, onBeforeUnmount, watch } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useDb } from "~/composables/useDb";
 import {
     Chart as ChartJS,
@@ -246,6 +275,7 @@ ChartJS.register(
 );
 
 const route = useRoute();
+const router = useRouter();
 const deckId = route.params.id;
 const db = useDb();
 
@@ -254,6 +284,8 @@ const games = ref([]); // all games filtered
 const displayedGames = ref([]); // chunked games array for infinite scroll
 const isLoading = ref(true);
 const isLoadingMore = ref(false);
+const isDeleting = ref(false);
+const showDeleteModal = ref(false);
 
 const loadMoreTrigger = ref(null);
 let observer = null;
@@ -427,6 +459,20 @@ const loadMore = () => {
         displayedGames.value = games.value.slice(0, endIndex);
         isLoadingMore.value = false;
     }, 300);
+};
+
+const executeDelete = async () => {
+    isDeleting.value = true;
+    try {
+        await db.deleteDeck(deckId);
+        showDeleteModal.value = false;
+        router.push("/decks");
+    } catch (error) {
+        console.error("Error deleting deck:", error);
+        alert("Failed to delete deck.");
+    } finally {
+        isDeleting.value = false;
+    }
 };
 
 onBeforeUnmount(() => {
