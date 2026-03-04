@@ -259,7 +259,14 @@ const removeParticipant = (index) => {
 };
 
 const onPlayerChange = (index) => {
-    newGame.value.participants[index].deckId = "";
+    const participant = newGame.value.participants[index];
+    const availableDecks = getDecksForPlayer(participant.playerId);
+
+    if (availableDecks.length === 1) {
+        participant.deckId = availableDecks[0].id;
+    } else {
+        participant.deckId = "";
+    }
 };
 
 const submitGame = async () => {
@@ -341,9 +348,13 @@ const loadLastGamePlayers = async () => {
                 newGame.value.participants = [];
 
                 previousParticipants.forEach((p) => {
+                    const availableDecks = getDecksForPlayer(p.player_id);
                     newGame.value.participants.push({
                         playerId: p.player_id,
-                        deckId: "", // Only set player, not deck
+                        deckId:
+                            availableDecks.length === 1
+                                ? availableDecks[0].id
+                                : "",
                     });
                 });
 

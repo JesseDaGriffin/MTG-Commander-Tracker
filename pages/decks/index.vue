@@ -189,8 +189,17 @@ const groupedDecks = computed(() => {
     const groups = {};
     const query = playerSearchQuery.value.toLowerCase().trim();
 
-    decks.value.forEach((deck) => {
-        const playerName = deck.players?.name || "Unknown Player";
+    // Sort decks by commander name first
+    const sortedDecks = [...decks.value].sort((a, b) =>
+        a.commander_name.localeCompare(b.commander_name),
+    );
+
+    sortedDecks.forEach((deck) => {
+        // Skip decks if the owner was soft-deleted
+        const activePlayer = players.value.find((p) => p.id === deck.player_id);
+        if (!activePlayer) return;
+
+        const playerName = activePlayer.name;
 
         if (query && !playerName.toLowerCase().includes(query)) {
             return;
@@ -201,7 +210,16 @@ const groupedDecks = computed(() => {
         }
         groups[playerName].push(deck);
     });
-    return groups;
+
+    // Sort the grouped object keys alphabetically by player name
+    const sortedGroups = {};
+    Object.keys(groups)
+        .sort((a, b) => a.localeCompare(b))
+        .forEach((key) => {
+            sortedGroups[key] = groups[key];
+        });
+
+    return sortedGroups;
 });
 
 const loadInitialData = async () => {
