@@ -33,7 +33,10 @@
                         >
                             TBD
                             <BaseButton
-                                v-if="!isEditingWinner"
+                                v-if="
+                                    !isEditingWinner &&
+                                    game.user_id === user?.id
+                                "
                                 @click.stop="isEditingWinner = true"
                                 variant="secondary"
                                 customClass="text-xs px-2 py-1 h-auto min-h-0 ml-2 bg-secondary hover:bg-primary border border-border-color shadow-sm"
@@ -204,6 +207,8 @@
 
 <script setup>
 import { defineProps, ref, computed, defineEmits } from "vue";
+
+const user = useSupabaseUser();
 
 const props = defineProps({
     game: {

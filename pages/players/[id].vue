@@ -19,6 +19,7 @@
                 </NuxtLink>
 
                 <BaseButton
+                    v-if="player.user_id === user?.id"
                     variant="danger"
                     @click="showDeleteModal = true"
                     class="text-sm py-1.5 px-3"
@@ -279,6 +280,7 @@ const route = useRoute();
 const router = useRouter();
 const playerId = route.params.id;
 const db = useDb();
+const user = useSupabaseUser();
 
 const player = ref(null);
 const games = ref([]); // all games fetched for the player

@@ -47,6 +47,21 @@
             </div>
 
             <form @submit.prevent="handleAuth" class="relative z-10">
+                <div v-if="isSignUp" class="form-group mb-6 animate-fade-in-up">
+                    <label class="form-label" for="displayName"
+                        >Display Name</label
+                    >
+                    <BaseInput
+                        id="displayName"
+                        v-model="displayName"
+                        type="text"
+                        placeholder="Your display name"
+                        :required="isSignUp"
+                        :disabled="isLoading"
+                        class="bg-bg-tertiary/50 backdrop-blur-sm"
+                    />
+                </div>
+
                 <div class="form-group mb-6">
                     <label class="form-label" for="email">Email</label>
                     <BaseInput
@@ -132,8 +147,9 @@ const router = useRouter();
 
 const email = ref("");
 const password = ref("");
+const displayName = ref("");
 const isSignUp = ref(false);
-const allowSignUp = ref(false); // Temporarily disabled for production launch
+const allowSignUp = ref(true); // Toggle to false to disable signups
 const isLoading = ref(false);
 const errorMsg = ref("");
 const successMsg = ref("");
@@ -142,6 +158,7 @@ const toggleMode = () => {
     isSignUp.value = !isSignUp.value;
     errorMsg.value = "";
     successMsg.value = "";
+    displayName.value = "";
 };
 
 const handleAuth = async () => {
@@ -158,11 +175,17 @@ const handleAuth = async () => {
             const { error } = await supabase.auth.signUp({
                 email: email.value,
                 password: password.value,
+                options: {
+                    data: {
+                        display_name: displayName.value,
+                    },
+                },
             });
             if (error) throw error;
             successMsg.value = "Check your email for the confirmation link!";
             email.value = "";
             password.value = "";
+            displayName.value = "";
         } else {
             const { error } = await supabase.auth.signInWithPassword({
                 email: email.value,

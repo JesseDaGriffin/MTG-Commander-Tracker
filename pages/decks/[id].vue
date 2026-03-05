@@ -18,6 +18,7 @@
                 </NuxtLink>
 
                 <BaseButton
+                    v-if="deck.user_id === user?.id"
                     variant="danger"
                     @click="showDeleteModal = true"
                     class="text-sm py-1.5 px-3"
@@ -278,6 +279,7 @@ const route = useRoute();
 const router = useRouter();
 const deckId = route.params.id;
 const db = useDb();
+const user = useSupabaseUser();
 
 const deck = ref(null);
 const games = ref([]); // all games filtered
