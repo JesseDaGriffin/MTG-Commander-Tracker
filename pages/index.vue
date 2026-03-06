@@ -419,7 +419,7 @@ const loadData = async () => {
         const [players, decks, games] = await Promise.all([
             db.getPlayers(),
             db.getDecks(),
-            db.getGames(),
+            db.getGames({ involvedOnly: true }),
         ]);
 
         metrics.value.totalPlayers = players.length;

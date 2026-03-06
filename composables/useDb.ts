@@ -13,7 +13,25 @@ export const useDb = () => {
                 .order("name");
 
             if (error) console.error(error);
-            return data || [];
+
+            const userId = user.value?.id || user.value?.sub;
+            const mapped = (data || []).map((p) => ({
+                ...p,
+                _is_you: p.is_profile && p.user_id === userId,
+                _is_friend: p.is_profile && p.user_id !== userId,
+            }));
+
+            const filtered = mapped.filter(
+                (p) => p.is_profile || p.user_id === userId,
+            );
+
+            return filtered.sort((a, b) => {
+                if (a._is_you && !b._is_you) return -1;
+                if (!a._is_you && b._is_you) return 1;
+                if (a._is_friend && !b._is_friend) return -1;
+                if (!a._is_friend && b._is_friend) return 1;
+                return a.name.localeCompare(b.name);
+            });
         },
 
         async addPlayer(name: string) {
@@ -38,6 +56,17 @@ export const useDb = () => {
         },
 
         async deletePlayer(playerId: string) {
+            // First check if this is a profile-linked player
+            const { data: player } = await supabase
+                .from("players")
+                .select("is_profile")
+                .eq("id", playerId)
+                .single();
+
+            if (player?.is_profile) {
+                throw new Error("Cannot delete a profile-linked player.");
+            }
+
             const { error } = await supabase
                 .from("players")
                 .update({ deleted_at: new Date().toISOString() })
@@ -53,7 +82,7 @@ export const useDb = () => {
                 .select(
                     `
           *,
-          players ( name )
+          players ( name, user_id, is_profile )
         `,
                 )
                 .eq("id", id)
@@ -69,14 +98,20 @@ export const useDb = () => {
                 .select(
                     `
           *,
-          players ( name )
+          players ( name, user_id, is_profile )
         `,
                 )
                 .is("deleted_at", null)
                 .order("created_at", { ascending: false });
 
             if (error) console.error(error);
-            return data || [];
+
+            const userId = user.value?.id || user.value?.sub;
+
+            // Filter out decks belonging to non-profile players created by other users
+            return (data || []).filter(
+                (d) => d.players?.is_profile || d.players?.user_id === userId,
+            );
         },
 
         async addDeck(
@@ -109,61 +144,46 @@ export const useDb = () => {
             return true;
         },
 
-        async getGames() {
+        async getGames(options?: { involvedOnly?: boolean }) {
             const { data, error } = await supabase
                 .from("games")
                 .select(
                     `
           *,
-          players!games_winner_id_fkey ( name ),
+          players!games_winner_id_fkey ( name, user_id, is_profile ),
           game_participants (
             id,
             player_id,
             deck_id,
-            players ( name ),
+            players ( name, user_id, is_profile ),
             decks ( id, commander_name, commander_image_url )
           )
         `,
                 )
                 .order("played_on", { ascending: false });
 
-            if (error) console.error(error);
-            return data || [];
-        },
+            if (error) {
+                console.error(error);
+                return [];
+            }
 
-        async getGamesCount() {
-            const { count, error } = await supabase
-                .from("games")
-                .select("*", { count: "exact", head: true });
+            let games = data || [];
 
-            if (error) console.error(error);
-            return count || 0;
-        },
+            // Filter out games that the logged-in user isn't involved in
+            if (options?.involvedOnly) {
+                const userId = user.value?.id || user.value?.sub;
+                if (userId) {
+                    games = games.filter((g) =>
+                        g.game_participants?.some(
+                            (p) =>
+                                p.players?.user_id === userId &&
+                                p.players?.is_profile,
+                        ),
+                    );
+                }
+            }
 
-        async getGamesPaginated(page: number, pageSize: number = 10) {
-            const from = (page - 1) * pageSize;
-            const to = from + pageSize - 1;
-
-            const { data, error } = await supabase
-                .from("games")
-                .select(
-                    `
-          *,
-          players!games_winner_id_fkey ( name ),
-          game_participants (
-            id,
-            player_id,
-            deck_id,
-            players ( name ),
-            decks ( id, commander_name, commander_image_url )
-          )
-        `,
-                )
-                .order("played_on", { ascending: false })
-                .range(from, to);
-
-            if (error) console.error(error);
-            return data || [];
+            return games;
         },
 
         async updateGameWinner(

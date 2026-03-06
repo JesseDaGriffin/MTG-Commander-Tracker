@@ -18,7 +18,10 @@
                 </NuxtLink>
 
                 <BaseButton
-                    v-if="deck.user_id === user?.id"
+                    v-if="
+                        deck.players?.user_id === user?.id ||
+                        deck.players?.user_id === user?.sub
+                    "
                     variant="danger"
                     @click="showDeleteModal = true"
                     class="text-sm py-1.5 px-3"

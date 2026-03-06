@@ -18,9 +18,9 @@
                         >
                             <Icon
                                 name="mdi:crown"
-                                class="text-amber-400 text-xl"
+                                class="text-amber-400 text-xl shrink-0"
                             />
-                            {{ game.players?.name }}
+                            <PlayerName :player="game.players" />
                         </span>
                         <span
                             v-else-if="game.is_draw"
@@ -183,7 +183,7 @@
                                     game.winner_id === participant.player_id,
                             }"
                         >
-                            {{ participant.players?.name || "Unknown Player" }}
+                            <PlayerName :player="participant.players" />
                         </span>
                         <span class="text-[0.7rem] text-muted truncate">
                             {{

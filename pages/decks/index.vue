@@ -26,6 +26,16 @@
                         players.map((player) => ({
                             label: player.name,
                             value: player.id,
+                            icon: player._is_you
+                                ? 'mdi:account'
+                                : player._is_friend
+                                  ? 'mdi:account-heart'
+                                  : null,
+                            iconClass: player._is_you
+                                ? 'text-accent-primary'
+                                : player._is_friend
+                                  ? 'text-mtg-red'
+                                  : '',
                         }))
                     "
                 />
@@ -104,14 +114,18 @@
                 class="flex flex-col gap-8"
             >
                 <div
-                    v-for="(playerDecks, playerName) in groupedDecks"
-                    :key="playerName"
+                    v-for="(playerDecks, playerId) in groupedDecks"
+                    :key="playerId"
                     class="player-group"
                 >
                     <h4
-                        class="text-lg font-bold text-secondary mb-4 border-b border-border-color pb-1 inline-block"
+                        class="text-lg font-bold text-secondary mb-4 border-b border-border-color pb-1 flex items-center gap-1 w-fit"
                     >
-                        {{ playerName }}'s Decks
+                        <PlayerName
+                            :player="getPlayerObjById(playerId)"
+                            suffix="'s"
+                        />
+                        Decks
                     </h4>
 
                     <div
@@ -201,26 +215,38 @@ const groupedDecks = computed(() => {
 
         const playerName = activePlayer.name;
 
+        const playerId = activePlayer.id;
+
         if (query && !playerName.toLowerCase().includes(query)) {
             return;
         }
 
-        if (!groups[playerName]) {
-            groups[playerName] = [];
+        if (!groups[playerId]) {
+            groups[playerId] = [];
         }
-        groups[playerName].push(deck);
+        groups[playerId].push(deck);
     });
 
     // Sort the grouped object keys alphabetically by player name
     const sortedGroups = {};
     Object.keys(groups)
-        .sort((a, b) => a.localeCompare(b))
+        .sort((a, b) => {
+            const playerA = players.value.find((p) => p.id === a);
+            const playerB = players.value.find((p) => p.id === b);
+            const nameA = playerA ? playerA.name : "";
+            const nameB = playerB ? playerB.name : "";
+            return nameA.localeCompare(nameB);
+        })
         .forEach((key) => {
             sortedGroups[key] = groups[key];
         });
 
     return sortedGroups;
 });
+
+const getPlayerObjById = (playerId) => {
+    return players.value.find((p) => p.id === playerId) || { name: "Unknown" };
+};
 
 const loadInitialData = async () => {
     isLoading.value = true;

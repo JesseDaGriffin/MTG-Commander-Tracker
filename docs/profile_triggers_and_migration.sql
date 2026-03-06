@@ -24,6 +24,10 @@ BEGIN
     INSERT INTO public.profiles (id, display_name, friend_code)
     VALUES (new.id, base_name, gen_friend_code);
 
+    -- Also create an associated record in the players table
+    INSERT INTO public.players (user_id, name, is_profile)
+    VALUES (new.id, base_name, true);
+
     RETURN new;
 END;
 $$;
@@ -57,6 +61,10 @@ BEGIN
         
         INSERT INTO public.profiles (id, display_name, friend_code)
         VALUES (usr.id, base_name, gen_friend_code);
+
+        -- Create associated player record
+        INSERT INTO public.players (user_id, name, is_profile)
+        VALUES (usr.id, base_name, true);
     END LOOP;
 END;
 $$;

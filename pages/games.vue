@@ -100,16 +100,17 @@ const totalGames = ref(0);
 
 const hasMore = computed(() => games.value.length < totalGames.value);
 
+const allGames = ref([]);
+
 const loadData = async () => {
     isLoading.value = true;
     currentPage.value = 1;
     try {
-        const [gamesData, count] = await Promise.all([
-            db.getGamesPaginated(1, pageSize.value),
-            db.getGamesCount(),
-        ]);
-        games.value = gamesData;
-        totalGames.value = count;
+        allGames.value = await db.getGames({ involvedOnly: true });
+
+        totalGames.value = allGames.value.length;
+        games.value = allGames.value.slice(0, pageSize.value);
+
         setupObserver();
     } catch (error) {
         console.error("Failed to load games data:", error);
@@ -122,19 +123,14 @@ const loadMore = async () => {
     if (isLoadingMore.value || !hasMore.value) return;
 
     isLoadingMore.value = true;
-    currentPage.value++;
 
-    try {
-        const newGames = await db.getGamesPaginated(
-            currentPage.value,
-            pageSize.value,
-        );
-        games.value = [...games.value, ...newGames];
-    } catch (error) {
-        console.error("Failed to fetch more games:", error);
-    } finally {
+    // Simulate slight network delay for smoother UI feedback
+    setTimeout(() => {
+        currentPage.value++;
+        const endIndex = currentPage.value * pageSize.value;
+        games.value = allGames.value.slice(0, endIndex);
         isLoadingMore.value = false;
-    }
+    }, 300);
 };
 
 const setupObserver = () => {

@@ -10,9 +10,9 @@
         </div>
         <div class="min-w-0">
             <h4
-                class="text-lg font-bold text-primary truncate group-hover:text-accent-primary transition-colors"
+                class="text-lg font-bold text-primary truncate group-hover:text-accent-primary transition-colors block"
             >
-                {{ player.name }}
+                <PlayerName :player="player" />
             </h4>
             <p class="text-xs text-muted">
                 Joined {{ new Date(player.created_at).toLocaleDateString() }}

@@ -44,6 +44,16 @@
                                 players.map((player) => ({
                                     label: player.name,
                                     value: player.id,
+                                    icon: player._is_you
+                                        ? 'mdi:account'
+                                        : player._is_friend
+                                          ? 'mdi:account-heart'
+                                          : null,
+                                    iconClass: player._is_you
+                                        ? 'text-accent-primary'
+                                        : player._is_friend
+                                          ? 'text-mtg-red'
+                                          : '',
                                     disabled: newGame.participants.some(
                                         (p, i) =>
                                             i !== index &&
@@ -121,7 +131,7 @@
                                 : 'bg-tertiary text-text-secondary border border-border-color hover:border-accent-primary hover:text-text-primary'
                         "
                     >
-                        {{ getPlayerName(p.playerId) }}
+                        <PlayerName :player="getPlayerObj(p.playerId)" />
                     </button>
                     <button
                         type="button"
@@ -236,9 +246,8 @@ const getDecksForPlayer = (playerId) => {
     return decks.value.filter((d) => d.player_id === playerId);
 };
 
-const getPlayerName = (playerId) => {
-    const player = players.value.find((p) => p.id === playerId);
-    return player ? player.name : "Unknown";
+const getPlayerObj = (playerId) => {
+    return players.value.find((p) => p.id === playerId) || null;
 };
 
 const addParticipant = () => {
@@ -339,7 +348,7 @@ const isLoadingLastGame = ref(false);
 const loadLastGamePlayers = async () => {
     isLoadingLastGame.value = true;
     try {
-        const lastGames = await db.getGamesPaginated(1, 1);
+        const lastGames = await db.getGames({ involvedOnly: true });
         if (lastGames && lastGames.length > 0) {
             const lastGame = lastGames[0];
             const previousParticipants = lastGame.game_participants;
