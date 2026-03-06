@@ -17,8 +17,8 @@
             ]"
             aria-label="Toggle Menu"
         >
-            <div class="relative inline-block">
-                <Icon :name="iconName" class="text-2xl" />
+            <div class="relative flex">
+                <Icon :name="iconName" class="text-2xl leading-none" />
                 <!-- Notification Dot for Trigger -->
                 <span
                     v-if="pendingRequestsCount > 0"

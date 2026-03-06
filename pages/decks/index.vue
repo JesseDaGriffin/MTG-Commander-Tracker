@@ -124,6 +124,7 @@
                         <PlayerName
                             :player="getPlayerObjById(playerId)"
                             suffix="'s"
+                            iconPosition="left"
                         />
                         Decks
                     </h4>
@@ -227,15 +228,26 @@ const groupedDecks = computed(() => {
         groups[playerId].push(deck);
     });
 
-    // Sort the grouped object keys alphabetically by player name
+    // Sort the grouped object keys by: Me first, Friends second, Alphabetical third
     const sortedGroups = {};
     Object.keys(groups)
         .sort((a, b) => {
             const playerA = players.value.find((p) => p.id === a);
             const playerB = players.value.find((p) => p.id === b);
-            const nameA = playerA ? playerA.name : "";
-            const nameB = playerB ? playerB.name : "";
-            return nameA.localeCompare(nameB);
+
+            const isYouA = playerA?._is_you ? 1 : 0;
+            const isYouB = playerB?._is_you ? 1 : 0;
+            if (isYouA !== isYouB) return isYouB - isYouA;
+
+            const isFriendA = playerA?._is_friend ? 1 : 0;
+            const isFriendB = playerB?._is_friend ? 1 : 0;
+            if (isFriendA !== isFriendB) return isFriendB - isFriendA;
+
+            const nameA = playerA ? playerA.name || "" : "";
+            const nameB = playerB ? playerB.name || "" : "";
+            return nameA.localeCompare(nameB, undefined, {
+                sensitivity: "base",
+            });
         })
         .forEach((key) => {
             sortedGroups[key] = groups[key];

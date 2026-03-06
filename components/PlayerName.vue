@@ -1,22 +1,46 @@
 <template>
     <span class="inline-flex items-center gap-1.5 min-w-0" :class="customClass">
-        <span class="truncate"
-            >{{ player?.name || "Unknown Player" }}{{ suffix }}</span
-        >
-        <Icon
-            v-if="isYou"
-            name="mdi:account"
-            class="text-accent-primary shrink-0 opacity-90"
-            :class="iconSizeClass"
-            title="You"
-        />
-        <Icon
-            v-else-if="isFriend"
-            name="mdi:account-heart"
-            class="text-mtg-red shrink-0 opacity-90"
-            :class="iconSizeClass"
-            title="Friend"
-        />
+        <!-- Render icon on the left if specified -->
+        <template v-if="iconPosition === 'left'">
+            <Icon
+                v-if="isYou"
+                name="mdi:account"
+                class="text-accent-primary shrink-0 opacity-90"
+                :class="iconSizeClass"
+                title="You"
+            />
+            <Icon
+                v-else-if="isFriend"
+                name="mdi:account-heart"
+                class="text-mtg-red shrink-0 opacity-90"
+                :class="iconSizeClass"
+                title="Friend"
+            />
+            <span class="truncate"
+                >{{ player?.name || "Unknown Player" }}{{ suffix }}</span
+            >
+        </template>
+
+        <!-- Default: Render icon on the right -->
+        <template v-else>
+            <span class="truncate"
+                >{{ player?.name || "Unknown Player" }}{{ suffix }}</span
+            >
+            <Icon
+                v-if="isYou"
+                name="mdi:account"
+                class="text-accent-primary shrink-0 opacity-90"
+                :class="iconSizeClass"
+                title="You"
+            />
+            <Icon
+                v-else-if="isFriend"
+                name="mdi:account-heart"
+                class="text-mtg-red shrink-0 opacity-90"
+                :class="iconSizeClass"
+                title="Friend"
+            />
+        </template>
     </span>
 </template>
 
@@ -40,6 +64,10 @@ const props = defineProps({
     suffix: {
         type: String,
         default: "",
+    },
+    iconPosition: {
+        type: String,
+        default: "right", // "left" or "right"
     },
 });
 

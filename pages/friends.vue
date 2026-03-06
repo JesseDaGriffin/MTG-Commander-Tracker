@@ -102,12 +102,8 @@
 
                 <!-- Pending Incoming Requests -->
                 <div
-                    class="card p-6 border-l-4 transition-colors"
-                    :class="
-                        incomingRequests.length > 0
-                            ? 'border-l-mtg-red bg-red-950/10'
-                            : 'border-l-transparent'
-                    "
+                    v-if="incomingRequests.length > 0"
+                    class="card p-6 border-l-4 border-l-mtg-red bg-red-950/10 transition-colors"
                 >
                     <h3
                         class="text-xl font-bold mb-4 border-b border-border-color pb-2 flex items-center gap-2"
@@ -128,10 +124,7 @@
                         >
                     </h3>
 
-                    <div
-                        v-if="incomingRequests.length > 0"
-                        class="flex flex-col gap-3"
-                    >
+                    <div class="flex flex-col gap-3">
                         <div
                             v-for="req in incomingRequests"
                             :key="req.id"
@@ -167,13 +160,10 @@
                             </div>
                         </div>
                     </div>
-                    <div v-else class="text-sm text-muted text-center py-4">
-                        No pending friend requests.
-                    </div>
                 </div>
 
                 <!-- Pending Outgoing Requests -->
-                <div class="card p-6">
+                <div v-if="outgoingRequests.length > 0" class="card p-6">
                     <h3
                         class="text-md font-bold mb-4 border-b border-border-color pb-2 flex items-center gap-2 text-secondary"
                     >
@@ -185,10 +175,7 @@
                             >{{ outgoingRequests.length }}</span
                         >
                     </h3>
-                    <div
-                        v-if="outgoingRequests.length > 0"
-                        class="flex flex-col gap-2"
-                    >
+                    <div class="flex flex-col gap-2">
                         <div
                             v-for="req in outgoingRequests"
                             :key="req.id"
@@ -208,9 +195,6 @@
                                 Cancel
                             </button>
                         </div>
-                    </div>
-                    <div v-else class="text-sm text-muted text-center py-4">
-                        No sent requests pending.
                     </div>
                 </div>
             </div>
@@ -279,6 +263,25 @@
                 </div>
             </div>
         </div>
+
+        <!-- Remove Friend Confirmation Modal -->
+        <BaseModal
+            v-model="showRemoveModal"
+            title="Remove Friend"
+            :loading="isRemoving"
+            @confirm="confirmRemoveFriend"
+        >
+            <p>
+                Are you sure you want to remove
+                <span class="font-bold text-mtg-red">{{
+                    friendToRemoveName
+                }}</span>
+                from your friends list?
+            </p>
+            <p class="text-xs text-muted mt-2">
+                This action will delete the friendship connection permanently.
+            </p>
+        </BaseModal>
     </div>
 </template>
 
@@ -296,6 +299,11 @@ const friendCodeInput = ref("");
 const isAdding = ref(false);
 const addErrorMsg = ref("");
 const addSuccessMsg = ref("");
+
+const showRemoveModal = ref(false);
+const isRemoving = ref(false);
+const friendToRemoveId = ref(null);
+const friendToRemoveName = ref("");
 
 // Computed Filters
 const incomingRequests = computed(() => {
@@ -414,14 +422,28 @@ const cancelRequest = async (id) => {
     }
 };
 
-const removeFriend = async (id) => {
-    if (confirm("Are you sure you want to remove this friend?")) {
-        try {
-            await db.deleteFriendship(id);
-            allFriendships.value = await db.getFriendships();
-        } catch (err) {
-            console.error(err);
-        }
+const removeFriend = (id) => {
+    friendToRemoveId.value = id;
+    const friendship = friends.value.find((f) => f.id === id);
+    friendToRemoveName.value =
+        getFriendProfile(friendship)?.display_name || "this friend";
+    showRemoveModal.value = true;
+};
+
+const confirmRemoveFriend = async () => {
+    if (!friendToRemoveId.value) return;
+
+    isRemoving.value = true;
+    try {
+        await db.deleteFriendship(friendToRemoveId.value);
+        allFriendships.value = await db.getFriendships();
+        showRemoveModal.value = false;
+    } catch (err) {
+        console.error(err);
+        alert("Failed to remove friend.");
+    } finally {
+        isRemoving.value = false;
+        friendToRemoveId.value = null;
     }
 };
 

@@ -173,7 +173,7 @@
                     class="w-full bg-secondary border border-border-color rounded-lg p-3 text-sm text-primary placeholder-muted focus:outline-none focus:border-accent-primary focus:ring-1 focus:ring-accent-primary transition-all resize-none"
                     rows="3"
                     maxlength="255"
-                    placeholder="Any memorable moments? Example: 'Marshall countered my Commander 3 times...'"
+                    placeholder="Any memorable moments? Example: 'Casey countered my Commander 3 times...'"
                 ></textarea>
             </div>
 
