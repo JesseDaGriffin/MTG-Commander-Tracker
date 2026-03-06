@@ -58,8 +58,9 @@
                         <span
                             class="font-medium text-text-primary"
                             :class="{ 'text-amber-400 font-bold': index === 0 }"
-                            >{{ player.name }}</span
                         >
+                            <PlayerName :player="player" />
+                        </span>
                     </div>
                     <div
                         class="flex items-center gap-1.5 bg-tertiary px-3 py-1 rounded-full text-sm border border-border-color"
@@ -102,7 +103,7 @@ const fetchData = async () => {
     try {
         const [players, games] = await Promise.all([
             db.getPlayers(),
-            db.getGames(),
+            db.getGames({ involvedOnly: true }),
         ]);
 
         const winCounts = {};
@@ -117,6 +118,7 @@ const fetchData = async () => {
             .map(([playerId, wins]) => {
                 const player = players.find((p) => p.id === playerId);
                 return {
+                    ...player,
                     id: playerId,
                     name: player ? player.name : "Unknown Player",
                     wins,

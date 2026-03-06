@@ -18,9 +18,9 @@
                         >
                             <Icon
                                 name="mdi:crown"
-                                class="text-amber-400 text-xl"
+                                class="text-amber-400 text-xl shrink-0"
                             />
-                            {{ game.players?.name }}
+                            <PlayerName :player="game.players" />
                         </span>
                         <span
                             v-else-if="game.is_draw"
@@ -33,7 +33,10 @@
                         >
                             TBD
                             <BaseButton
-                                v-if="!isEditingWinner"
+                                v-if="
+                                    !isEditingWinner &&
+                                    game.user_id === user?.id
+                                "
                                 @click.stop="isEditingWinner = true"
                                 variant="secondary"
                                 customClass="text-xs px-2 py-1 h-auto min-h-0 ml-2 bg-secondary hover:bg-primary border border-border-color shadow-sm"
@@ -180,7 +183,7 @@
                                     game.winner_id === participant.player_id,
                             }"
                         >
-                            {{ participant.players?.name || "Unknown Player" }}
+                            <PlayerName :player="participant.players" />
                         </span>
                         <span class="text-[0.7rem] text-muted truncate">
                             {{
@@ -204,6 +207,8 @@
 
 <script setup>
 import { defineProps, ref, computed, defineEmits } from "vue";
+
+const user = useSupabaseUser();
 
 const props = defineProps({
     game: {
