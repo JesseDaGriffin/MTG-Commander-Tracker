@@ -1,9 +1,10 @@
 <template>
     <Teleport to="body">
         <Transition name="modal">
+            <!-- Focus trap wrapper with higher z-index -->
             <div
                 v-if="modelValue"
-                class="fixed inset-0 z-50 flex items-center justify-center overflow-x-hidden overflow-y-auto outline-none focus:outline-none"
+                class="fixed inset-0 z-[100] flex items-center justify-center overflow-x-hidden overflow-y-auto outline-none focus:outline-none p-4"
                 @click.self="closeOnOutsideClick ? close() : null"
             >
                 <!-- Backdrop with blur -->
@@ -129,8 +130,15 @@ watch(
     () => props.modelValue,
     (isOpen) => {
         if (isOpen) {
+            // Calculate scrollbar width to prevent desktop layout shift
+            const scrollbarWidth =
+                window.innerWidth - document.documentElement.clientWidth;
+            if (scrollbarWidth > 0) {
+                document.body.style.paddingRight = `${scrollbarWidth}px`;
+            }
             document.body.style.overflow = "hidden";
         } else {
+            document.body.style.paddingRight = "";
             document.body.style.overflow = "";
         }
     },

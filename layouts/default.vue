@@ -52,14 +52,12 @@
                         active-class="text-accent-primary router-link-active"
                         >Games</NuxtLink
                     >
-                    <BaseButton
-                        variant="secondary"
-                        customClass="text-sm ml-4"
-                        icon="mdi:logout"
-                        @click="signOut"
-                    >
-                        Sign Out
-                    </BaseButton>
+                    <AppMenu
+                        @signOut="signOut"
+                        iconName="mdi:account-circle"
+                        customClass="ml-4"
+                        menuAnchor="top"
+                    />
                 </nav>
             </div>
         </header>
@@ -107,13 +105,13 @@
                 <Icon name="mdi:sword-cross" class="text-2xl" />
                 <span class="text-[0.7rem] font-medium">Games</span>
             </NuxtLink>
-            <button
-                @click="signOut"
-                class="flex flex-col items-center justify-center gap-1 text-secondary w-full h-full transition-colors hover:text-mtg-red"
-            >
-                <Icon name="mdi:logout" class="text-2xl" />
-                <span class="text-[0.7rem] font-medium">Log Out</span>
-            </button>
+            <AppMenu
+                @signOut="signOut"
+                iconName="mdi:menu"
+                :showLabel="true"
+                customClass="w-full h-full rounded-none hover:bg-transparent"
+                menuAnchor="bottom"
+            />
         </nav>
     </div>
 </template>
