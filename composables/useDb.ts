@@ -173,9 +173,9 @@ export const useDb = () => {
             if (options?.involvedOnly) {
                 const userId = user.value?.id || user.value?.sub;
                 if (userId) {
-                    games = games.filter((g) =>
+                    games = games.filter((g: any) =>
                         g.game_participants?.some(
-                            (p) =>
+                            (p: any) =>
                                 p.players?.user_id === userId &&
                                 p.players?.is_profile,
                         ),

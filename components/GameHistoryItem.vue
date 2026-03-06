@@ -35,7 +35,8 @@
                             <BaseButton
                                 v-if="
                                     !isEditingWinner &&
-                                    game.user_id === user?.id
+                                    (game.user_id === (user?.id || user?.sub) ||
+                                        isUserInvolved)
                                 "
                                 @click.stop="isEditingWinner = true"
                                 variant="secondary"
@@ -224,6 +225,14 @@ const isEditingWinner = ref(false);
 const selectedWinnerId = ref("");
 const editNotes = ref(props.game.notes || "");
 const isSaving = ref(false);
+
+const isUserInvolved = computed(() => {
+    if (!user.value) return false;
+    const userId = user.value.id || user.value.sub;
+    return props.game.game_participants?.some(
+        (p) => p.players?.user_id === userId,
+    );
+});
 
 const saveWinner = async () => {
     if (!selectedWinnerId.value) return;
