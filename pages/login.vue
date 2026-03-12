@@ -111,6 +111,17 @@
                 >
                     {{ isSignUp ? "Sign Up" : "Sign In" }}
                 </BaseButton>
+
+                <div v-if="isSignUp" class="text-center mt-2 mb-2">
+                    <button
+                        type="button"
+                        class="text-sm text-accent-primary hover:text-accent-hover hover:underline transition-colors bg-transparent border-none cursor-pointer"
+                        @click="handleResend"
+                        :disabled="isLoading"
+                    >
+                        Already attempted to sign up? Resend email
+                    </button>
+                </div>
             </form>
 
             <div v-if="allowSignUp" class="text-center mt-4 relative z-10">
@@ -161,6 +172,33 @@ const toggleMode = () => {
     displayName.value = "";
 };
 
+const handleResend = async () => {
+    if (!email.value) {
+        errorMsg.value = "Please enter your email to resend the confirmation.";
+        return;
+    }
+    isLoading.value = true;
+    errorMsg.value = "";
+    successMsg.value = "";
+
+    try {
+        const { error } = await supabase.auth.resend({
+            type: "signup",
+            email: email.value,
+            options: {
+                emailRedirectTo: window.location.origin,
+            },
+        });
+        if (error) throw error;
+        successMsg.value = "Confirmation email resent! Check your inbox.";
+        password.value = "";
+    } catch (error) {
+        errorMsg.value = error.message;
+    } finally {
+        isLoading.value = false;
+    }
+};
+
 const handleAuth = async () => {
     isLoading.value = true;
     errorMsg.value = "";
@@ -179,6 +217,7 @@ const handleAuth = async () => {
                     data: {
                         display_name: displayName.value,
                     },
+                    emailRedirectTo: window.location.origin,
                 },
             });
             if (error) throw error;
