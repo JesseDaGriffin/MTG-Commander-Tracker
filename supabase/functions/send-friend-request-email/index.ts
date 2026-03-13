@@ -76,7 +76,7 @@ serve(async (req) => {
                         <p style="color: #94a3b8; font-size: 16px; line-height: 1.5; margin-bottom: 30px;">
                             Log in to your dashboard to review and accept the request.
                         </p>
-                        <a href="${SUPABASE_URL.replace('supabase.co', 'supabase.co')}" style="background-color: #0ea5e9; color: white; text-decoration: none; padding: 14px 30px; border-radius: 6px; font-weight: bold; display: inline-block;">View Dashboard</a>
+                        <a href="https://arcaneledger.netlify.app/friends" style="background-color: #0ea5e9; color: white; text-decoration: none; padding: 14px 30px; border-radius: 6px; font-weight: bold; display: inline-block;">View Friend Requests</a>
                     </div>
                 </div>
             </div>
