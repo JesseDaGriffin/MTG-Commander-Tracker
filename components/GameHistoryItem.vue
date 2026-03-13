@@ -18,9 +18,9 @@
                         >
                             <Icon
                                 name="mdi:crown"
-                                class="text-amber-400 text-xl"
+                                class="text-amber-400 text-xl shrink-0"
                             />
-                            {{ game.players?.name }}
+                            <PlayerName :player="game.players" />
                         </span>
                         <span
                             v-else-if="game.is_draw"
@@ -33,7 +33,11 @@
                         >
                             TBD
                             <BaseButton
-                                v-if="!isEditingWinner"
+                                v-if="
+                                    !isEditingWinner &&
+                                    (game.user_id === (user?.id || user?.sub) ||
+                                        isUserInvolved)
+                                "
                                 @click.stop="isEditingWinner = true"
                                 variant="secondary"
                                 customClass="text-xs px-2 py-1 h-auto min-h-0 ml-2 bg-secondary hover:bg-primary border border-border-color shadow-sm"
@@ -55,7 +59,12 @@
                         class="text-sm text-muted flex items-center gap-1 mt-1"
                     >
                         <Icon name="mdi:calendar-clock" />
-                        {{ formatDateTime(game.played_on) }}
+                        <ClientOnly>
+                            {{ formatDateTime(game.played_on) }}
+                            <template #fallback>
+                                <span>Loading date...</span>
+                            </template>
+                        </ClientOnly>
                     </div>
                 </div>
                 <Icon
@@ -76,31 +85,53 @@
                 class="w-full bg-white/5 p-4 mt-4 rounded-xl border border-white/10 shadow-lg relative animate-fade-in backdrop-blur-sm"
                 @click.stop
             >
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-secondary mb-2"
-                        >Select Winner</label
+                <div class="mb-5">
+                    <label
+                        class="block text-sm font-semibold text-primary mb-3 uppercase tracking-wider"
                     >
-                    <BaseSelect
-                        v-model="selectedWinnerId"
-                        class="w-full"
-                        placeholder="-- Choose Winner --"
-                        required
-                        :options="
-                            game.game_participants.map((p) => ({
-                                label: p.players?.name || 'Unknown',
-                                value: p.player_id,
-                            }))
-                        "
-                    />
+                        <Icon name="mdi:trophy-outline" class="mr-1 mb-1" />
+                        Select Winner
+                    </label>
+                    <div class="flex flex-wrap gap-2">
+                        <button
+                            v-for="p in game.game_participants"
+                            :key="p.player_id"
+                            type="button"
+                            @click="selectedWinnerId = p.player_id"
+                            class="px-4 py-2 rounded-full text-sm font-medium transition-all"
+                            :class="
+                                selectedWinnerId === p.player_id
+                                    ? 'bg-accent-primary text-white shadow-md shadow-accent-primary/50 border border-accent-primary'
+                                    : 'bg-tertiary text-text-secondary border border-border-color hover:border-accent-primary hover:text-text-primary'
+                            "
+                        >
+                            {{ p.players?.name || "Unknown" }}
+                        </button>
+                        <button
+                            type="button"
+                            @click="selectedWinnerId = 'draw'"
+                            class="px-4 py-2 rounded-full text-sm font-medium transition-all"
+                            :class="
+                                selectedWinnerId === 'draw'
+                                    ? 'bg-orange-600 text-white shadow-md shadow-orange-600/50 border border-orange-500'
+                                    : 'bg-tertiary text-text-secondary border border-border-color hover:border-orange-500 hover:text-text-primary'
+                            "
+                        >
+                            Draw / Tie
+                        </button>
+                    </div>
                 </div>
 
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-secondary mb-2"
-                        >Notes (Optional)</label
+                <div class="mb-5">
+                    <label
+                        class="block text-sm font-semibold text-primary mb-3 uppercase tracking-wider"
                     >
+                        <Icon name="mdi:note-text-outline" class="mr-1 mb-1" />
+                        Notes (Optional)
+                    </label>
                     <textarea
                         v-model="editNotes"
-                        class="form-input resize-none"
+                        class="w-full bg-secondary border border-border-color rounded-lg p-3 text-sm text-primary placeholder-muted focus:outline-none focus:border-accent-primary focus:ring-1 focus:ring-accent-primary transition-all resize-none"
                         rows="2"
                         placeholder="Any memorable moments?"
                     ></textarea>
@@ -153,7 +184,7 @@
                                     game.winner_id === participant.player_id,
                             }"
                         >
-                            {{ participant.players?.name || "Unknown Player" }}
+                            <PlayerName :player="participant.players" />
                         </span>
                         <span class="text-[0.7rem] text-muted truncate">
                             {{
@@ -178,6 +209,8 @@
 <script setup>
 import { defineProps, ref, computed, defineEmits } from "vue";
 
+const user = useSupabaseUser();
+
 const props = defineProps({
     game: {
         type: Object,
@@ -192,6 +225,14 @@ const isEditingWinner = ref(false);
 const selectedWinnerId = ref("");
 const editNotes = ref(props.game.notes || "");
 const isSaving = ref(false);
+
+const isUserInvolved = computed(() => {
+    if (!user.value) return false;
+    const userId = user.value.id || user.value.sub;
+    return props.game.game_participants?.some(
+        (p) => p.players?.user_id === userId,
+    );
+});
 
 const saveWinner = async () => {
     if (!selectedWinnerId.value) return;

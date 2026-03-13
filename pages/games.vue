@@ -43,6 +43,20 @@
                     :game="game"
                     @updated="loadData"
                 />
+
+                <!-- Infinite Scroll Trigger -->
+                <div ref="loadMoreTrigger" class="h-4 w-full"></div>
+
+                <!-- Loading More Status -->
+                <div
+                    v-if="isLoadingMore"
+                    class="flex justify-center p-4 text-muted"
+                >
+                    <Icon
+                        name="mdi:loading"
+                        class="animate-spin text-3xl text-accent-primary"
+                    />
+                </div>
             </div>
 
             <div
@@ -65,19 +79,39 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, onBeforeUnmount, computed } from "vue";
+import { useRoute } from "vue-router";
+import { useDb } from "~/composables/useDb";
 
 const db = useDb();
 const route = useRoute();
 
 const games = ref([]);
 const isLoading = ref(true);
+const isLoadingMore = ref(false);
 const showAddForm = ref(false);
+
+const loadMoreTrigger = ref(null);
+let observer = null;
+
+const currentPage = ref(1);
+const pageSize = ref(5);
+const totalGames = ref(0);
+
+const hasMore = computed(() => games.value.length < totalGames.value);
+
+const allGames = ref([]);
 
 const loadData = async () => {
     isLoading.value = true;
+    currentPage.value = 1;
     try {
-        games.value = await db.getGames();
+        allGames.value = await db.getGames({ involvedOnly: true });
+
+        totalGames.value = allGames.value.length;
+        games.value = allGames.value.slice(0, pageSize.value);
+
+        setupObserver();
     } catch (error) {
         console.error("Failed to load games data:", error);
     } finally {
@@ -85,8 +119,51 @@ const loadData = async () => {
     }
 };
 
+const loadMore = async () => {
+    if (isLoadingMore.value || !hasMore.value) return;
+
+    isLoadingMore.value = true;
+
+    // Simulate slight network delay for smoother UI feedback
+    setTimeout(() => {
+        currentPage.value++;
+        const endIndex = currentPage.value * pageSize.value;
+        games.value = allGames.value.slice(0, endIndex);
+        isLoadingMore.value = false;
+    }, 300);
+};
+
+const setupObserver = () => {
+    // Need a slight delay to ensure DOM is updated before observing
+    setTimeout(() => {
+        if (!loadMoreTrigger.value) return;
+
+        if (observer) observer.disconnect();
+
+        observer = new IntersectionObserver(
+            (entries) => {
+                if (
+                    entries[0].isIntersecting &&
+                    hasMore.value &&
+                    !isLoadingMore.value
+                ) {
+                    loadMore();
+                }
+            },
+            { rootMargin: "150px" },
+        ); // Trigger a bit before they hit the very bottom
+
+        observer.observe(loadMoreTrigger.value);
+    }, 100);
+};
+
+onBeforeUnmount(() => {
+    if (observer) observer.disconnect();
+});
+
 const onGameSaved = () => {
     showAddForm.value = false;
+    // Reload first page completely
     loadData();
 };
 

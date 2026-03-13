@@ -19,11 +19,26 @@
                 @keydown.enter.prevent="onEnter"
                 @keydown.esc.prevent="close"
                 class="form-input w-full pr-8 cursor-pointer bg-tertiary border border-border-color rounded-md"
-                :class="{ 'opacity-50 cursor-not-allowed': disabled }"
+                :class="[
+                    { 'opacity-50 cursor-not-allowed': disabled },
+                    selectedOption?.icon ? 'pl-9' : '',
+                ]"
                 role="combobox"
                 :aria-expanded="isOpen"
                 aria-controls="options-list"
             />
+
+            <!-- Selected Option Icon -->
+            <div
+                v-if="selectedOption?.icon"
+                class="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none z-10"
+            >
+                <Icon
+                    :name="selectedOption.icon"
+                    :class="selectedOption.iconClass || 'text-muted'"
+                    class="text-[1.1rem]"
+                />
+            </div>
 
             <!-- Dropdown Icon -->
             <div
@@ -38,15 +53,9 @@
 
         <!-- Options List Layer (Teleported or Absolute) -->
         <div
-            v-show="isOpen"
+            v-if="isOpen"
             id="options-list"
-            class="absolute left-0 w-full mt-1 bg-tertiary border border-border-color rounded-md shadow-lg max-h-60 overflow-y-auto z-[100]"
-            style="
-                min-width: 100%;
-                box-shadow:
-                    0 10px 25px -5px rgba(0, 0, 0, 0.5),
-                    0 8px 10px -6px rgba(0, 0, 0, 0.5);
-            "
+            class="absolute left-0 w-full min-w-full mt-1 bg-tertiary border border-border-color rounded-md shadow-xl max-h-60 overflow-y-auto z-[100]"
         >
             <ul role="listbox" class="py-1 m-0 list-none p-0">
                 <li
@@ -75,9 +84,15 @@
                     @click="selectOption(option)"
                     @mouseenter="highlightedIndex = index"
                 >
-                    <span class="truncate block w-full">{{
-                        option.label
-                    }}</span>
+                    <span class="truncate w-full flex items-center gap-2">
+                        <Icon
+                            v-if="option.icon"
+                            :name="option.icon"
+                            :class="option.iconClass || 'text-muted'"
+                            class="text-lg shrink-0"
+                        />
+                        {{ option.label }}
+                    </span>
                     <Icon
                         v-if="modelValue === option.value"
                         name="mdi:check"

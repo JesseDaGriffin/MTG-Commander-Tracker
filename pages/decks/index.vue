@@ -26,6 +26,16 @@
                         players.map((player) => ({
                             label: player.name,
                             value: player.id,
+                            icon: player._is_you
+                                ? 'mdi:account'
+                                : player._is_friend
+                                  ? 'mdi:account-heart'
+                                  : null,
+                            iconClass: player._is_you
+                                ? 'text-accent-primary'
+                                : player._is_friend
+                                  ? 'text-mtg-red'
+                                  : '',
                         }))
                     "
                 />
@@ -104,14 +114,19 @@
                 class="flex flex-col gap-8"
             >
                 <div
-                    v-for="(playerDecks, playerName) in groupedDecks"
-                    :key="playerName"
+                    v-for="(playerDecks, playerId) in groupedDecks"
+                    :key="playerId"
                     class="player-group"
                 >
                     <h4
-                        class="text-lg font-bold text-secondary mb-4 border-b border-border-color pb-1 inline-block"
+                        class="text-lg font-bold text-secondary mb-4 border-b border-border-color pb-1 flex items-center gap-1 w-fit"
                     >
-                        {{ playerName }}'s Decks
+                        <PlayerName
+                            :player="getPlayerObjById(playerId)"
+                            suffix="'s"
+                            iconPosition="left"
+                        />
+                        Decks
                     </h4>
 
                     <div
@@ -121,8 +136,6 @@
                             v-for="deck in playerDecks"
                             :key="deck.id"
                             :deck="deck"
-                            :is-deleting="isDeleting === deck.id"
-                            @delete="deleteDeck"
                             @preview="openPreview"
                         />
                     </div>
@@ -162,7 +175,6 @@ const selectedCommander = ref(null);
 const players = ref([]);
 const selectedPlayerId = ref("");
 const isSubmitting = ref(false);
-const isDeleting = ref(null);
 const decks = ref([]);
 const isLoading = ref(true);
 const commanderSearchRef = ref(null);
@@ -192,20 +204,61 @@ const groupedDecks = computed(() => {
     const groups = {};
     const query = playerSearchQuery.value.toLowerCase().trim();
 
-    decks.value.forEach((deck) => {
-        const playerName = deck.players?.name || "Unknown Player";
+    // Sort decks by commander name first
+    const sortedDecks = [...decks.value].sort((a, b) =>
+        a.commander_name.localeCompare(b.commander_name),
+    );
+
+    sortedDecks.forEach((deck) => {
+        // Skip decks if the owner was soft-deleted
+        const activePlayer = players.value.find((p) => p.id === deck.player_id);
+        if (!activePlayer) return;
+
+        const playerName = activePlayer.name;
+
+        const playerId = activePlayer.id;
 
         if (query && !playerName.toLowerCase().includes(query)) {
             return;
         }
 
-        if (!groups[playerName]) {
-            groups[playerName] = [];
+        if (!groups[playerId]) {
+            groups[playerId] = [];
         }
-        groups[playerName].push(deck);
+        groups[playerId].push(deck);
     });
-    return groups;
+
+    // Sort the grouped object keys by: Me first, Friends second, Alphabetical third
+    const sortedGroups = {};
+    Object.keys(groups)
+        .sort((a, b) => {
+            const playerA = players.value.find((p) => p.id === a);
+            const playerB = players.value.find((p) => p.id === b);
+
+            const isYouA = playerA?._is_you ? 1 : 0;
+            const isYouB = playerB?._is_you ? 1 : 0;
+            if (isYouA !== isYouB) return isYouB - isYouA;
+
+            const isFriendA = playerA?._is_friend ? 1 : 0;
+            const isFriendB = playerB?._is_friend ? 1 : 0;
+            if (isFriendA !== isFriendB) return isFriendB - isFriendA;
+
+            const nameA = playerA ? playerA.name || "" : "";
+            const nameB = playerB ? playerB.name || "" : "";
+            return nameA.localeCompare(nameB, undefined, {
+                sensitivity: "base",
+            });
+        })
+        .forEach((key) => {
+            sortedGroups[key] = groups[key];
+        });
+
+    return sortedGroups;
 });
+
+const getPlayerObjById = (playerId) => {
+    return players.value.find((p) => p.id === playerId) || { name: "Unknown" };
+};
 
 const loadInitialData = async () => {
     isLoading.value = true;
@@ -251,27 +304,6 @@ const saveDeck = async () => {
         alert("Failed to save deck.");
     } finally {
         isSubmitting.value = false;
-    }
-};
-
-const deleteDeck = async (deck) => {
-    if (
-        !confirm(
-            `Are you sure you want to remove ${deck.commander_name} from the list?`,
-        )
-    ) {
-        return;
-    }
-
-    isDeleting.value = deck.id;
-    try {
-        await db.deleteDeck(deck.id);
-        await loadInitialData();
-    } catch (error) {
-        console.error("Error soft-deleting deck:", error);
-        alert("Failed to delete deck.");
-    } finally {
-        isDeleting.value = null;
     }
 };
 

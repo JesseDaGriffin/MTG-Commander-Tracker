@@ -104,6 +104,55 @@ export interface Database {
                     user_id?: string;
                 };
             };
+            profiles: {
+                Row: {
+                    id: string;
+                    display_name: string;
+                    friend_code: string;
+                    created_at: string;
+                    updated_at: string;
+                };
+                Insert: {
+                    id: string;
+                    display_name: string;
+                    friend_code: string;
+                    created_at?: string;
+                    updated_at?: string;
+                };
+                Update: {
+                    id?: string;
+                    display_name?: string;
+                    friend_code?: string;
+                    created_at?: string;
+                    updated_at?: string;
+                };
+            };
+            friendships: {
+                Row: {
+                    id: string;
+                    user_id: string;
+                    friend_id: string;
+                    status: string;
+                    created_at: string;
+                    updated_at: string;
+                };
+                Insert: {
+                    id?: string;
+                    user_id?: string;
+                    friend_id: string;
+                    status: string;
+                    created_at?: string;
+                    updated_at?: string;
+                };
+                Update: {
+                    id?: string;
+                    user_id?: string;
+                    friend_id?: string;
+                    status?: string;
+                    created_at?: string;
+                    updated_at?: string;
+                };
+            };
         };
         Views: {
             [_ in never]: never;

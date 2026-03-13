@@ -31,10 +31,11 @@
                 v-else-if="leaderboard.length > 0"
                 class="flex flex-col gap-3 pb-2 flex-grow"
             >
-                <div
+                <NuxtLink
                     v-for="(player, index) in leaderboard"
                     :key="player.id"
-                    class="flex items-center justify-between bg-bg-secondary p-3 rounded-md border border-white/5 transition-colors hover:bg-tertiary"
+                    :to="`/players/${player.id}`"
+                    class="flex items-center justify-between bg-bg-secondary p-3 rounded-md border border-white/5 transition-colors hover:bg-tertiary cursor-pointer"
                     :class="{
                         'ring-1 ring-amber-400/50 bg-amber-400/5': index === 0,
                     }"
@@ -57,8 +58,9 @@
                         <span
                             class="font-medium text-text-primary"
                             :class="{ 'text-amber-400 font-bold': index === 0 }"
-                            >{{ player.name }}</span
                         >
+                            <PlayerName :player="player" />
+                        </span>
                     </div>
                     <div
                         class="flex items-center gap-1.5 bg-tertiary px-3 py-1 rounded-full text-sm border border-border-color"
@@ -71,7 +73,7 @@
                             >Wins</span
                         >
                     </div>
-                </div>
+                </NuxtLink>
             </div>
 
             <div
@@ -101,7 +103,7 @@ const fetchData = async () => {
     try {
         const [players, games] = await Promise.all([
             db.getPlayers(),
-            db.getGames(),
+            db.getGames({ involvedOnly: true }),
         ]);
 
         const winCounts = {};
@@ -116,6 +118,7 @@ const fetchData = async () => {
             .map(([playerId, wins]) => {
                 const player = players.find((p) => p.id === playerId);
                 return {
+                    ...player,
                     id: playerId,
                     name: player ? player.name : "Unknown Player",
                     wins,
