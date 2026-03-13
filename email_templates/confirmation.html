@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Confirm Your Signup - Arcane Ledger</title>
+        <style>
+            body {
+                font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+                margin: 0;
+                padding: 0;
+                background-color: #0b1120;
+                color: #e2e8f0;
+                -webkit-font-smoothing: antialiased;
+            }
+            .wrapper {
+                width: 100%;
+                table-layout: fixed;
+                background-color: #0b1120;
+                padding-top: 40px;
+                padding-bottom: 40px;
+            }
+            .main {
+                background-color: #1e293b;
+                margin: 0 auto;
+                width: 100%;
+                max-width: 600px;
+                border-spacing: 0;
+                border-radius: 16px;
+                overflow: hidden;
+                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+                border: 1px solid rgba(255, 255, 255, 0.05);
+            }
+            .header {
+                background: linear-gradient(135deg, #0ea5e9, #3b82f6);
+                padding: 30px 20px;
+                text-align: center;
+            }
+            .header h1 {
+                color: #ffffff;
+                margin: 0;
+                font-size: 28px;
+                font-weight: 900;
+                letter-spacing: 1.5px;
+                text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            }
+            .content {
+                padding: 40px 30px;
+                text-align: center;
+            }
+            .content h2 {
+                color: #f8fafc;
+                font-size: 24px;
+                margin-top: 0;
+                margin-bottom: 20px;
+                font-weight: 700;
+            }
+            .content p {
+                color: #94a3b8;
+                font-size: 16px;
+                line-height: 1.6;
+                margin: 0 0 30px 0;
+            }
+            .button-wrapper {
+                margin: 40px 0;
+            }
+            .button {
+                background-color: #0ea5e9;
+                color: #ffffff !important;
+                text-decoration: none;
+                padding: 16px 36px;
+                border-radius: 8px;
+                font-weight: bold;
+                font-size: 16px;
+                display: inline-block;
+                box-shadow: 0 4px 14px 0 rgba(14, 165, 233, 0.39);
+            }
+            .footer {
+                background-color: #0f172a;
+                padding: 24px 30px;
+                text-align: center;
+                border-top: 1px solid rgba(255, 255, 255, 0.05);
+            }
+            .footer p {
+                color: #64748b;
+                font-size: 13px;
+                margin: 0;
+                line-height: 1.5;
+            }
+            .highlight {
+                color: #38bdf8;
+                font-weight: 600;
+            }
+        </style>
+    </head>
+    <body>
+        <center class="wrapper">
+            <table class="main" width="100%">
+                <tr>
+                    <td class="header">
+                        <h1>ARCANE LEDGER</h1>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="content">
+                        <h2>Welcome to the Gathering!</h2>
+                        <p>
+                            We're thrilled to have you join
+                            <span class="highlight">Arcane Ledger</span> to
+                            start tracking your Commander games, legendary
+                            rivalries, and epic victories.
+                        </p>
+                        <p>
+                            Your journey begins now. Please confirm your email
+                            address to unlock your dashboard and begin recording
+                            match data.
+                        </p>
+
+                        <div class="button-wrapper">
+                            <!-- {{ .ConfirmationURL }} will be resolved by Supabase -->
+                            <a href="{{ .ConfirmationURL }}" class="button"
+                                >Confirm Your Email</a
+                            >
+                        </div>
+
+                        <p style="font-size: 14px; margin-bottom: 0">
+                            If the button doesn't work, copy and paste this link
+                            into your browser:<br />
+                            <a
+                                href="{{ .ConfirmationURL }}"
+                                style="color: #0ea5e9; word-break: break-all"
+                                >{{ .ConfirmationURL }}</a
+                            >
+                        </p>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="footer">
+                        <p>
+                            If you didn't create an account, you can safely
+                            ignore this email. Someone probably cast a
+                            misdirected spell!
+                        </p>
+                        <p style="margin-top: 10px">
+                            &copy; 2026 Arcane Ledger. All rights reserved.
+                        </p>
+                    </td>
+                </tr>
+            </table>
+        </center>
+    </body>
+</html>
